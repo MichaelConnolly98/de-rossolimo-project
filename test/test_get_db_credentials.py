@@ -1,4 +1,4 @@
-from src.get_db_credentials import get_db_credentials
+from src.extract import get_db_credentials
 from botocore.exceptions import ClientError
 
 import pytest
