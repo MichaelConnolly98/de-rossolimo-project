@@ -3,9 +3,9 @@ from pg8000.native import Connection
 
 def get_connection():
     return Connection(
-        user=credentials_dict["username"]
-        password=credentials_dict["password"]
-        database=credentials_dict["database"]
-        host=credentials_dict["host"]
+        user=credentials_dict["username"],
+        password=credentials_dict["password"],
+        database=credentials_dict["database"],
+        host=credentials_dict["host"],
         port=credentials_dict["port"]
         )
