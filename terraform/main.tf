@@ -21,7 +21,7 @@ provider "aws" {
       DeployedFrom = "Terraform"
       Repository = "de-rossolimo-project"
       Environment = "dev"
-      TeamMembers = "Michael, Mostyn, Nick, Leonette, Heiman"
+      TeamMembers = "Michael-Mostyn-Nick-Leonette-Heiman"
     }
   }
 }
