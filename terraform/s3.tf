@@ -13,5 +13,14 @@ resource "aws_s3_bucket" "code_bucket" {
     BucketType = "Code"
     BucketFunction = "LambdaContainer"
   }
+}
 
+
+
+resource "aws_s3_object" "lambda_extract" {
+  bucket = aws_s3_bucket.code_bucket.bucket
+  key = "lambda/extract.zip"
+  source = "${path.module}/../lambda_packages/extract.zip"
+  etag = filemd5("${path.module}/../lambda_packages/extract.zip")
+  depends_on = [ data.archive_file.lambda_extract ]
 }
