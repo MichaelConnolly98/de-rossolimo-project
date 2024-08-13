@@ -68,6 +68,14 @@ def test_func_splits_data_by_table(s3_client):
     counter = 0
     for i in response['Contents']:
         counter +=1
+    assert response['KeyCount'] == 2
     assert counter == 2
     assert (f'table=table1/year={datetime.now().year}/month={datetime.now().month}/day={datetime.now().day}') in response['Contents'][0]['Key']
     assert (f'table=table2/year={datetime.now().year}/month={datetime.now().month}/day={datetime.now().day}') in response['Contents'][1]['Key']
+
+
+def test_func_returns_error_when_passed_empty_string(s3_client, caplog):
+    with caplog.at_level(logging.INFO):
+        load('')
+        assert 'error occurred: TypeError("string indices must be integers, not \'str\'")\n' in caplog.text
+
