@@ -16,6 +16,11 @@ resource "aws_lambda_function" "lambda_extract" {
     timeout = 10
     depends_on = [ aws_s3_object.lambda_extract, aws_lambda_layer_version.dependency_layer ]
     layers = [ aws_lambda_layer_version.dependency_layer.arn ]
+    environment {
+      variables = {
+        S3_BUCKET_NAME = aws_s3_bucket.data_bucket.id
+      }
+    }
 }
 
 data "archive_file" "layer" {
