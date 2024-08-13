@@ -24,3 +24,12 @@ resource "aws_s3_object" "lambda_extract" {
   etag = filemd5("${path.module}/../lambda_packages/extract.zip")
   depends_on = [ data.archive_file.lambda_extract ]
 }
+
+resource "aws_s3_object" "layer_code" {
+  bucket = aws_s3_bucket.code_bucket.bucket
+  key = "lambda/layer.zip"
+  etag = filemd5("${path.module}/../layer.zip")
+  source = "${path.module}/../layer.zip"
+}
+
+
