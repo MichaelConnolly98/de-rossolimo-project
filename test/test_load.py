@@ -30,14 +30,14 @@ def s3_client(aws_creds):
 
 def test_func_loads_object_and_logs(s3_client, caplog):
     with caplog.at_level(logging.INFO):
-        assert load({'fake': 'Data'}) == {'result': 'success'}
+        assert load({'All Data':{'fake': 'Data'}}) == {'result': 'success'}
         assert 'success' in caplog.text
 
 @patch('src.load.boto3.client', side_effect=Exception)
 def test_func_raises_exception_and_logs(s3_client, caplog):
     with caplog.at_level(logging.INFO):
         with pytest.raises(Exception):
-            load(123)
+            load({'All Data':{'fake': 'Data'}})
             assert 'error' in caplog.text
 
 @patch('src.load.datetime')
@@ -45,5 +45,20 @@ def test_func_logs_correct_time( datetime_patch, s3_client, caplog):
     datetime_patch.now().return_value = '2002-11-09T16:38:23.417667'
     datetime_patch.now.return_value.strftime.side_effect = ['2002-11-09', '16:38:23']
     with caplog.at_level(logging.INFO):
-        load(123)
+        load({'All Data':{'fake': 'Data'}})
         assert '2002-11-09' in caplog.text
+
+
+def test_func_splits_data_by_table(s3_client):
+    fake_data = {'All Data': {'table 1': [
+        {'house_number': 5, 'street': 'first_street'},
+        {'house_number': 6, 'street': 'second_street'}
+            ], 
+            'table 2': [
+                {'seller_id': 1, 'name': 'Nick'},
+                {'seller_id': 2, 'name': 'Mike'}
+            ]
+        }
+    }
+
+    assert load(fake_data) == {'result': 'success'}
