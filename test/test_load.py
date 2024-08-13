@@ -33,8 +33,8 @@ def test_func_loads_object_and_logs(s3_client, caplog):
         load({'fake': 'Data'})
         assert 'success' in caplog.text
 
-@patch('BUCKETNAME', side_effect='fake_bucket')
+@patch('src.load.BUCKETNAME', side_effect='fake_bucket')
 def test_func_raises_exception_and_logs(s3_client, caplog):
     with caplog.at_level(logging.INFO):
-        assert load() == Exception
+        assert load(data=None) == Exception
         assert 'error' in caplog.text
