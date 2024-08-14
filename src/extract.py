@@ -7,16 +7,7 @@ from pprint import pprint
 import json
 
 
-"""
-Extract from database
-
-Convert to JSON
-
-Confirm how the data is passed to Michael
-"""
-
 def lambda_handler(event, context):
-
     pass
 
 
@@ -44,7 +35,7 @@ def get_connection():
         )
 
 
-def extract():
+def extract(datetime='2000-01-01 00:00'):
     with get_connection() as conn:
 
         table_names_sql_query = """
@@ -57,11 +48,10 @@ def extract():
         table_names_nested_list = conn.run(table_names_sql_query)
         table_names_flattened_list = [element[0] for element in table_names_nested_list if element[0] != '_prisma_migrations']
 
-    # print (table_names_flattened_list)
-
     def query_table(table_name):
         with get_connection() as conn:
-            table_query = f"""SELECT * FROM {identifier(table_name)};"""
+            table_query = f"""SELECT * FROM {identifier(table_name)}
+                            WHERE last_updated > {literal(datetime)};"""
             data = conn.run(table_query)
             columns = [column['name'] for column in conn.columns]
 
@@ -76,13 +66,6 @@ def extract():
     for table in table_names_flattened_list:
         data_dict[table] = query_table(table)
     
-    pprint (data_dict["address"])
-
     all_data_dict = {"all_data": data_dict}
 
     return all_data_dict
- 
-
-
-extract()
-
