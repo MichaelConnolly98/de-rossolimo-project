@@ -5,7 +5,7 @@ from datetime import datetime
 import logging
 from botocore.exceptions import ClientError
 
-logger = logging.getLogger("MyLogger")
+logger = logging.getLogger("LoadLogger")
 logger.setLevel(logging.INFO)
 
 """ writes data to date encoded s3 folder split into table folders """
@@ -25,20 +25,21 @@ def load(data):
         
     try: 
         for key, value in data['all_data'].items():
-            s3.put_object(
-                Bucket = (BUCKETNAME),
-                Key = (f'table={key}/year={date.year}/month={date.month}/day={date.day}/{folder_name_2}.json'),
-                Body = json.dumps({key: value}, default=str)
-            )
-            response = s3.get_object(
-                Bucket = (BUCKETNAME),
-                Key = (f'table={key}/year={date.year}/month={date.month}/day={date.day}/{folder_name_2}.json')
-            )
-            response_body = response['Body'].read().decode('utf-8')
-            print(response_body)
-            if response_body == None:
-                logger.error(f'error occurred: body not uploaded at {folder_name} {folder_name_2}')
-                return f'error at {folder_name} {folder_name_2}'
+            if value:
+                s3.put_object(
+                    Bucket = (BUCKETNAME),
+                    Key = (f'table={key}/year={date.year}/month={date.month}/day={date.day}/{folder_name_2}.json'),
+                    Body = json.dumps({key: value}, default=str)
+                )
+                response = s3.get_object(
+                    Bucket = (BUCKETNAME),
+                    Key = (f'table={key}/year={date.year}/month={date.month}/day={date.day}/{folder_name_2}.json')
+                )
+                response_body = response['Body'].read().decode('utf-8')
+                print(response_body)
+                if response_body == None:
+                    logger.error(f'error occurred: body not uploaded at {folder_name} {folder_name_2}')
+                    return f'error at {folder_name} {folder_name_2}'
 
         logger.info(f'success at {folder_name} {folder_name_2}')
         return {'result': 'success'}

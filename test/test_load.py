@@ -98,3 +98,9 @@ def test_func_can_handle_non_serializable_objects(s3_client, caplog):
         fake_data = {'all_data': {'table1': [{'nso': datetime(2002,8,14)}]}}
         result = load(fake_data)
         assert result == {'result': 'success'}
+
+def test_func_doesnt_serialize_nums(s3_client, caplog):
+    with caplog.at_level(logging.INFO):
+        fake_data = {'all_data': {'table1': [123]}}
+        result = load(fake_data)
+        assert result == {'result': 'success'}
