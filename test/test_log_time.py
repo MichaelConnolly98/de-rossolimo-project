@@ -2,7 +2,7 @@ import pytest
 import boto3
 from moto import mock_aws
 import os
-from src.log_time import get_timestamp_from_logs
+from src.extract.log_time import get_timestamp_from_logs
 import logging
 
 
@@ -20,11 +20,13 @@ def aws_credentials():
     os.environ['AWS_SESSION_TOKEN'] = 'test'
     os.environ['AWS_DEFAULT_REGION'] = 'eu-west-2'
 
+#mock object with no streaming logs or log groups
 @pytest.fixture(scope='function')
 def mock_logs_client(aws_credentials):
     with mock_aws():
         yield boto3.client('logs', region_name='eu-west-2')
 
+#mock object with streaming logs and log group
 @pytest.fixture(scope="function")
 def mock_logs_with_stream_and_group(mock_logs_client):
     mock_logs_client.create_log_group(
