@@ -1,0 +1,8 @@
+version: '3.0'
+
+security:
+  ignore-vulnerabilities:
+    70612:
+      reason: the creators deem it acceptable
+    72083:
+      reason: not relevant

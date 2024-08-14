@@ -9,4 +9,5 @@ def lambda_handler(event, context):
     data = extract()
     result = load(data)
 
+
 lambda_handler(0, 0)
