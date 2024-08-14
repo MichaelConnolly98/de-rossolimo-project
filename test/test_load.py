@@ -1,4 +1,4 @@
-from src.load import load
+from src.extract.load import load
 from moto import mock_aws
 import pytest
 import boto3
@@ -30,14 +30,14 @@ def s3_client(aws_creds):
 
 def test_func_loads_object_and_logs(s3_client, caplog):
     with caplog.at_level(logging.INFO):
-        assert load({'All Data':{'fake': ['Data']}}) == {'result': 'success'}
+        assert load({'all_data':{'fake': ['Data']}}) == {'result': 'success'}
         assert 'success' in caplog.text
 
 @patch('src.load.boto3.client', side_effect=Exception)
 def test_func_raises_exception_and_logs(s3_client, caplog):
     with caplog.at_level(logging.INFO):
         with pytest.raises(Exception):
-            load({'All Data':{'fake': ['Data']}})
+            load({'all_data':{'fake': ['Data']}})
             assert 'error' in caplog.text
 
 @patch('src.load.datetime')
@@ -50,7 +50,7 @@ def test_func_logs_correct_time( datetime_patch, s3_client, caplog):
 
 
 def test_func_splits_data_by_table(s3_client):
-    fake_data = {'All Data': {'table1': [
+    fake_data = {'all_data': {'table1': [
         {'house_number': 5, 'street': 'first_street'},
         {'house_number': 6, 'street': 'second_street'}
             ], 
@@ -79,3 +79,28 @@ def test_func_returns_error_when_passed_empty_string(s3_client, caplog):
         load('')
         assert 'error occurred: TypeError("string indices must be integers, not \'str\'")\n' in caplog.text
 
+def test_func_can_log_when_empty_str_body_uploaded(s3_client, caplog):
+    with caplog.at_level(logging.INFO):
+        fake_data = {'all_data': ''}
+        result = load(fake_data)
+        assert 'error at ' in result
+        assert 'error occurred: incorrect body' in caplog.text
+
+def test_func_can_log_when_empty_dict_body_uploaded(s3_client, caplog):
+    with caplog.at_level(logging.INFO):
+        fake_data = {'all_data': {}}
+        result = load(fake_data)
+        assert 'error at ' in result
+        assert 'error occurred: incorrect body' in caplog.text
+
+def test_func_can_handle_non_serializable_objects(s3_client, caplog):
+    with caplog.at_level(logging.INFO):
+        fake_data = {'all_data': {'table1': [{'nso': datetime(2002,8,14)}]}}
+        result = load(fake_data)
+        assert result == {'result': 'success'}
+
+def test_func_doesnt_serialize_nums(s3_client, caplog):
+    with caplog.at_level(logging.INFO):
+        fake_data = {'all_data': {'table1': [123]}}
+        result = load(fake_data)
+        assert result == {'result': 'success'}
