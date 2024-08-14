@@ -79,10 +79,22 @@ def test_func_returns_error_when_passed_empty_string(s3_client, caplog):
         load('')
         assert 'error occurred: TypeError("string indices must be integers, not \'str\'")\n' in caplog.text
 
-def test_func_can_log_when_no_body_uploaded(s3_client, caplog):
-    fake_data = {'all_data': {
-        }
-    }
-    result = load(fake_data)
-    print(result)
-    # assert 'error at ' in result 
+def test_func_can_log_when_empty_str_body_uploaded(s3_client, caplog):
+    with caplog.at_level(logging.INFO):
+        fake_data = {'all_data': ''}
+        result = load(fake_data)
+        assert 'error at ' in result
+        assert 'error occurred: incorrect body' in caplog.text
+
+def test_func_can_log_when_empty_dict_body_uploaded(s3_client, caplog):
+    with caplog.at_level(logging.INFO):
+        fake_data = {'all_data': {}}
+        result = load(fake_data)
+        assert 'error at ' in result
+        assert 'error occurred: incorrect body' in caplog.text
+
+def test_func_can_handle_non_serializable_objects(s3_client, caplog):
+    with caplog.at_level(logging.INFO):
+        fake_data = {'all_data': {'table1': [{'nso': datetime(2002,8,14)}]}}
+        result = load(fake_data)
+        assert result == {'result': 'success'}

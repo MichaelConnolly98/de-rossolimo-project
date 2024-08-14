@@ -19,6 +19,9 @@ def load(data):
     folder_name = datetime.now().strftime("%Y-%m-%d")
     folder_name_2 = datetime.now().strftime('%H:%M:%S')
 
+    if data['all_data'] == '' or data['all_data'] is None or data['all_data'] == {}:
+        logger.error(f'error occurred: incorrect body')
+        return f'error at {folder_name} {folder_name_2}'
         
     try: 
         for key, value in data['all_data'].items():
@@ -27,17 +30,15 @@ def load(data):
                 Key = (f'table={key}/year={date.year}/month={date.month}/day={date.day}/{folder_name_2}.json'),
                 Body = json.dumps({key: value}, default=str)
             )
-        for key, value in data['all_data'].items():
             response = s3.get_object(
                 Bucket = (BUCKETNAME),
                 Key = (f'table={key}/year={date.year}/month={date.month}/day={date.day}/{folder_name_2}.json')
             )
-
-            print(json.load(response['Body']))
-            if json.load(response['Body']) == None:
-                print('hello')
+            response_body = response['Body'].read().decode('utf-8')
+            print(response_body)
+            if response_body == None:
                 logger.error(f'error occurred: body not uploaded at {folder_name} {folder_name_2}')
-                return {f'error at {folder_name} {folder_name_2}'}
+                return f'error at {folder_name} {folder_name_2}'
 
         logger.info(f'success at {folder_name} {folder_name_2}')
         return {'result': 'success'}
