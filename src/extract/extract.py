@@ -7,10 +7,6 @@ from pprint import pprint
 import json
 
 
-def lambda_handler(event, context):
-    pass
-
-
 def get_db_credentials(secret_name='totesys', sm_client=boto3.client('secretsmanager')):
 
     try:
@@ -68,4 +64,7 @@ def extract(datetime='2000-01-01 00:00'):
     
     all_data_dict = {"all_data": data_dict}
 
+    # pprint(all_data_dict)
+
     return all_data_dict
+
