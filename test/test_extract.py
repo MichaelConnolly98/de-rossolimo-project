@@ -17,3 +17,6 @@ def test_extract_with_datetime_filter_applied_returns_filtered_data():
     test_func = extract(datetime_str_format)
     for data in test_func['all_data']['sales_order']:
         assert data['last_updated'] > datetime_date_format
+
+
+
