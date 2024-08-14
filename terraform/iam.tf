@@ -81,3 +81,21 @@ resource "aws_iam_role_policy_attachment" "lambda_cw_policy_attachment" {
   policy_arn = aws_iam_policy.cw_policy.arn
 }
 
+#allows lambda to access secrets
+resource "aws_iam_role_policy" "sm_policy" {
+  name = "sm_access_permissions"
+  role = aws_iam_role.lambda_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "secretsmanager:GetSecretValue",
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
+}
