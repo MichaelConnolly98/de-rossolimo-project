@@ -1,4 +1,4 @@
-from src.extract import extract
+from src.extract.extract_data import extract
 from datetime import datetime
 import pytest
 

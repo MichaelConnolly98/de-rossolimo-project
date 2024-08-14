@@ -1,4 +1,4 @@
-from src.extract.load import load
+from src.extract.load_data import load
 from moto import mock_aws
 import pytest
 import boto3
@@ -33,19 +33,19 @@ def test_func_loads_object_and_logs(s3_client, caplog):
         assert load({'all_data':{'fake': ['Data']}}) == {'result': 'success'}
         assert 'success' in caplog.text
 
-@patch('src.load.boto3.client', side_effect=Exception)
+@patch('src.extract.load_data.boto3.client', side_effect=Exception)
 def test_func_raises_exception_and_logs(s3_client, caplog):
     with caplog.at_level(logging.INFO):
         with pytest.raises(Exception):
             load({'all_data':{'fake': ['Data']}})
             assert 'error' in caplog.text
 
-@patch('src.load.datetime')
+@patch('src.extract.load_data.datetime')
 def test_func_logs_correct_time( datetime_patch, s3_client, caplog):
     datetime_patch.now().return_value = '2002-11-09T16:38:23.417667'
     datetime_patch.now.return_value.strftime.side_effect = ['2002-11-09', '16:38:23']
     with caplog.at_level(logging.INFO):
-        load({'All Data':{'fake': ['Data']}})
+        load({'all_data':{'fake': ['Data']}})
         assert '2002-11-09' in caplog.text
 
 
@@ -77,7 +77,7 @@ def test_func_splits_data_by_table(s3_client):
 def test_func_returns_error_when_passed_empty_string(s3_client, caplog):
     with caplog.at_level(logging.INFO):
         load('')
-        assert 'error occurred: TypeError("string indices must be integers, not \'str\'")\n' in caplog.text
+        assert 'error occurred:'  in caplog.text
 
 def test_func_can_log_when_empty_str_body_uploaded(s3_client, caplog):
     with caplog.at_level(logging.INFO):

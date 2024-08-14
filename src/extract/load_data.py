@@ -19,7 +19,7 @@ def load(data):
     folder_name = datetime.now().strftime("%Y-%m-%d")
     folder_name_2 = datetime.now().strftime('%H:%M:%S')
 
-    if data['all_data'] == '' or data['all_data'] is None or data['all_data'] == {}:
+    if data == '' or data['all_data'] == '' or data['all_data'] == None or data['all_data'] == {}:
         logger.error(f'error occurred: incorrect body')
         return f'error at {folder_name} {folder_name_2}'
         
@@ -36,7 +36,6 @@ def load(data):
                     Key = (f'table={key}/year={date.year}/month={date.month}/day={date.day}/{folder_name_2}.json')
                 )
                 response_body = response['Body'].read().decode('utf-8')
-                print(response_body)
                 if response_body == None:
                     logger.error(f'error occurred: body not uploaded at {folder_name} {folder_name_2}')
                     return f'error at {folder_name} {folder_name_2}'
