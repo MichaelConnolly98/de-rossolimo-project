@@ -5,18 +5,15 @@ from pg8000.native import DatabaseError
 import logging
 from unittest.mock import patch
 
-@pytest.mark.skip()
 def test_extract_function_returns_a_dictionary():
     test_func = extract()
     assert isinstance(test_func, dict)
     assert list(test_func.keys()) == ["all_data"]
 
-@pytest.mark.skip()
 def test_extract_function_returns_expected_number_of_tables():
     test_func = extract()
     assert len(test_func["all_data"]) == 11
 
-@pytest.mark.skip()
 def test_extract_with_datetime_filter_applied_returns_filtered_data():
     datetime_str_format = '2023-12-31 23:59:59.999'
     datetime_date_format = datetime.fromisoformat(datetime_str_format)
@@ -34,7 +31,7 @@ def test_database_error_is_raised_when_unacceptable_argument_is_given_to_extract
             assert "A database error has occured" in caplog.text
 
 
-@patch("src.extract.extract.get_connection", side_effect = Exception)
+@patch("src.extract.extract_data.get_connection", side_effect = Exception)
 def test_error_is_raised_when_exception_occurs(caplog):
     with caplog.at_level(logging.ERROR):
     
