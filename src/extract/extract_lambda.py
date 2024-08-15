@@ -1,5 +1,5 @@
 from extract_data import extract
-from load import load
+from load_data import load
 import os
 import pprint
 import logging
