@@ -17,34 +17,41 @@ def load(data):
     BUCKETNAME = os.environ["S3_BUCKET_NAME"]
     date = datetime.now()
     folder_name = datetime.now().strftime("%Y-%m-%d")
-    folder_name_2 = datetime.now().strftime('%H:%M:%S')
+    folder_name_2 = datetime.now().strftime("%H:%M:%S")
     counter = 0
 
-    for table in data['all_data']:
-        if not data['all_data'][table]:
-            counter +=1
+    for table in data["all_data"]:
+        if not data["all_data"][table]:
+            counter += 1
 
-    if counter == len(data['all_data']):
-        logger.warn('empty body uploaded')
-    
-    try: 
-        for key, value in data['all_data'].items():
+    if counter == len(data["all_data"]):
+        logger.warning("All tables uploaded as empty files")
+
+    try:
+        for key, value in data["all_data"].items():
             s3.put_object(
-                Bucket = (BUCKETNAME),
-                Key = (f'table={key}/year={date.year}/month={date.month}/day={date.day}/{folder_name_2}.json'),
-                Body = json.dumps({key: value}, default=str)
+                Bucket=(BUCKETNAME),
+                Key=(
+                    f"table={key}/year={date.year}/month={date.month}/day={date.day}/{folder_name_2}.json"
+                ),
+                Body=json.dumps({key: value}, default=str),
             )
             response = s3.get_object(
-                Bucket = (BUCKETNAME),
-                Key = (f'table={key}/year={date.year}/month={date.month}/day={date.day}/{folder_name_2}.json')
+                Bucket=(BUCKETNAME),
+                Key=(
+                    f"table={key}/year={date.year}/month={date.month}/day={date.day}/{folder_name_2}.json"
+                ),
             )
-            response_body = response['Body'].read().decode('utf-8')
-            if response_body == None:
-                logger.error(f'error occurred: body not uploaded at {folder_name} {folder_name_2}')
-                return f'error at {folder_name} {folder_name_2}'
-        
-        logger.info(f'success at {folder_name} {folder_name_2}')
-        return {'result': 'success'}
+            response_body = response["Body"].read().decode("utf-8")
+            if response_body is None:
+                logger.error(
+                    f"error occurred:"
+                    f" body not uploaded at {folder_name} {folder_name_2}"
+                )
+                return f"error at {folder_name} {folder_name_2}"
+
+        logger.info(f"success at {folder_name} {folder_name_2}")
+        return {"result": "success"}
 
     except TypeError as t:
         logger.error(f"error occurred: {repr(t)}")
@@ -55,5 +62,7 @@ def load(data):
         return c
 
     except Exception as e:
-        logger.error(f"error occurred while trying to upload to s3 bucket: {repr(e)}")
+        logger.error(
+            f"error occurred while trying to upload to s3 bucket: {repr(e)}"
+            )
         return e

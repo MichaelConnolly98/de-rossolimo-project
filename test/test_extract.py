@@ -25,13 +25,13 @@ def test_extract_with_datetime_filter_applied_returns_filtered_data():
         assert data["last_updated"] > datetime_date_format
 
 
-def test_database_error_is_raised_when_unacceptable_argument_is_given_to_extract_function(
+def test_database_error_raised_when_invalid_argument_given_to_extract_function(
     caplog,
 ):
     with caplog.at_level(logging.ERROR):
 
         with pytest.raises(DatabaseError) as e:
-            result = extract("staff")
+            extract("staff")
             assert str(e.value) == "A database error has occured"
             assert "A database error has occured" in caplog.text
 
@@ -41,6 +41,6 @@ def test_error_is_raised_when_exception_occurs(caplog):
     with caplog.at_level(logging.ERROR):
 
         with pytest.raises(Exception) as e:
-            result = extract()
+            extract()
             assert str(e.value) == "An error has occured"
             assert "An error has occured" in caplog.text
