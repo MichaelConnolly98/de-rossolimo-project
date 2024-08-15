@@ -18,7 +18,15 @@ def load(data):
     date = datetime.now()
     folder_name = datetime.now().strftime("%Y-%m-%d")
     folder_name_2 = datetime.now().strftime('%H:%M:%S')
+    counter = 0
 
+    for table in data['all_data']:
+        if not data['all_data'][table]:
+            counter +=1
+
+    if counter == len(data['all_data']):
+        logger.warn('empty body uploaded')
+    
     try: 
         for key, value in data['all_data'].items():
             s3.put_object(
@@ -34,6 +42,9 @@ def load(data):
             if response_body == None:
                 logger.error(f'error occurred: body not uploaded at {folder_name} {folder_name_2}')
                 return f'error at {folder_name} {folder_name_2}'
+        
+        logger.info(f'success at {folder_name} {folder_name_2}')
+        return {'result': 'success'}
 
     except TypeError as t:
         logger.error(f"error occurred: {repr(t)}")
