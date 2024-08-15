@@ -19,10 +19,6 @@ def load(data):
     folder_name = datetime.now().strftime("%Y-%m-%d")
     folder_name_2 = datetime.now().strftime('%H:%M:%S')
 
-    if data == '' or data['all_data'] == '' or data['all_data'] == None or data['all_data'] == {}:
-        logger.error(f'error occurred: incorrect body')
-        return f'error at {folder_name} {folder_name_2}'
-        
     try: 
         for key, value in data['all_data'].items():
             s3.put_object(
