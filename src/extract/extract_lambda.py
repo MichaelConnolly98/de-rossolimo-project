@@ -6,6 +6,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
+
 def lambda_handler(event, context):
     try:
         data = extract()
@@ -13,5 +15,3 @@ def lambda_handler(event, context):
         print(result)
     except Exception as e:
         logger.info(f"Unexpected Exception: {str(e)}")
-
-
