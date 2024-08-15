@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 def lambda_handler(event, context):
     try:
-        data = extract(get_timestamp_from_logs)
+        data = extract(get_timestamp_from_logs())
         result = load(data)
         print(result)
     except Exception as e:
