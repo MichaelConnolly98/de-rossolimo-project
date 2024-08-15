@@ -25,6 +25,7 @@ def mock_sm_client(aws_credentials):
         yield boto3.client("secretsmanager")
 
 
+
 def test_all_dict_keys_available(mock_sm_client):
     secret_info = {
         "username": "name",
