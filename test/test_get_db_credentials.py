@@ -6,9 +6,10 @@ import boto3
 import json
 from moto import mock_aws
 import os
+import logging
+from unittest.mock import patch
 
-
-@pytest.fixture(scope="function")
+@pytest.fixture(scope='function')
 def aws_credentials():
     os.environ["AWS_ACCESS_KEY_ID"] = "test"
     os.environ["AWS_SECRET_ACCESS_KEY"] = "test"
@@ -41,11 +42,12 @@ def test_all_dict_keys_available(mock_sm_client):
     for key in dict_keys:
         assert key in list(result.keys())
 
+def test_error_handling_secret_name_not_found(mock_sm_client, caplog):
+    with caplog.at_level(logging.ERROR):
+        with pytest.raises(ClientError) as e: 
+            result = get_db_credentials("does_not_exist", sm_client=mock_sm_client)
+            assert str(e.value) == "An error occurred (ResourceNotFoundException) when calling the GetSecretValue operation: Secrets Manager can't find the specified secret." 
+            assert  "An error occurred (ResourceNotFoundException) when calling the GetSecretValue operation: Secrets Manager can't find the specified secret." in caplog.text
 
-def test_error_handling_secret_name_not_found(mock_sm_client):
-    with pytest.raises(ClientError) as e:
-        result = get_db_credentials("does_not_exist", sm_client=mock_sm_client)
-    assert (
-        str(e.value)
-        == "An error occurred (ResourceNotFoundException) when calling the GetSecretValue operation: Secrets Manager can't find the specified secret."
-    )
+
+
