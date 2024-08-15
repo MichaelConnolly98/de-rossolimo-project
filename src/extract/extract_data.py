@@ -9,17 +9,18 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-def get_db_credentials(secret_name='totesys', sm_client=boto3.client('secretsmanager')):
+def get_db_credentials(secret_name="totesys", sm_client=boto3.client("secretsmanager")):
 
     try:
-        get_secret_value_response = sm_client.get_secret_value(
-            SecretId=secret_name
-        )
+        get_secret_value_response = sm_client.get_secret_value(SecretId=secret_name)
     except ClientError as e:
         raise e
 
+
     secret = json.loads(get_secret_value_response['SecretString'])
+
     return secret
+
 
 def get_connection():
     credentials_dict = get_db_credentials()
@@ -28,8 +29,9 @@ def get_connection():
         password=credentials_dict["password"],
         database=credentials_dict["dbname"],
         host=credentials_dict["host"],
-        port=credentials_dict["port"]
-        )
+        port=credentials_dict["port"],
+    )
+
 
 
 def extract(datetime='2000-01-01 00:00'):
@@ -51,12 +53,14 @@ def extract(datetime='2000-01-01 00:00'):
         all_data_dict = {"all_data": data_dict}
         return all_data_dict
 
+
     except DatabaseError as e:
         logging.error(f"A database error has occured: {str(e)}")
         raise DatabaseError("A database error has occured")
 
     except Exception as exception:
         logging.error(f"An error has occured: {str(e)}")
+
         raise Exception ("An error has occured")
 
 
@@ -75,3 +79,4 @@ def query_table(table_name, datetime):
 
 # data = extract(datetime='2024-10-01 00:00')
 # print(data)
+
