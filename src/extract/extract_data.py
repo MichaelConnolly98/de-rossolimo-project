@@ -9,7 +9,7 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-def get_db_credentials(secret_name="totesys", sm_client=boto3.client("secretsmanager")):
+def get_db_credentials(secret_name="totesys", sm_client=boto3.client("secretsmanager",region_name='eu-west-2')):
 
     try:
         get_secret_value_response = sm_client.get_secret_value(SecretId=secret_name)
