@@ -50,7 +50,8 @@ def test_get_timestamp_returns_timestamp_from_logs(mock_logs_with_stream_and_gro
     assert result == "2024-08-13 10:54:51"
 
 
-def test_get_timestamp_returns_most_recent_log_event(mock_logs_with_stream_and_group):
+def test_get_timestamp_returns_first_log_stream_start_time(
+        mock_logs_with_stream_and_group):
     mock_logs_with_stream_and_group.put_log_events(
         logGroupName="string",
         logStreamName="string",
@@ -63,12 +64,38 @@ def test_get_timestamp_returns_most_recent_log_event(mock_logs_with_stream_and_g
         logGroupName="string",
         logStreamName="string",
         logEvents=[
-            {"timestamp": 1723542892807, "message": "string"},
+            {"timestamp": 1723542899807, "message": "string"},
         ],
         sequenceToken="string",
     )
     result = get_timestamp_from_logs("string")
-    assert result == "2024-08-13 10:54:52"
+    assert result == "2024-08-13 10:54:51"
+
+def test_get_timestamp_returns_from_latest_log_stream(
+        mock_logs_with_stream_and_group
+    ):
+
+    mock_logs_with_stream_and_group.put_log_events(
+    logGroupName="string",
+    logStreamName="string",
+    logEvents=[
+        {"timestamp": 1723542891807, "message": "string"},
+    ],
+    sequenceToken="string",
+)
+    mock_logs_with_stream_and_group.create_log_stream(
+        logGroupName="string", logStreamName="second_stream"
+        )
+    mock_logs_with_stream_and_group.put_log_events(
+    logGroupName="string",
+    logStreamName="second_stream",
+    logEvents=[
+        {"timestamp": 1723549999999, "message": "string"},
+    ],
+    sequenceToken="string",
+    )
+    result = get_timestamp_from_logs("string")
+    assert result == "2024-08-13 12:53:19"
 
 
 def test_get_timestamp_raises_client_error_when_resource_not_exists(mock_logs_client):
