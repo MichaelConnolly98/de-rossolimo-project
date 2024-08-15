@@ -22,7 +22,7 @@ def aws_credentials():
 @pytest.fixture(scope="function")
 def mock_sm_client(aws_credentials):
     with mock_aws():
-        yield boto3.client("secretsmanager", region_name="eu-west-1")
+        yield boto3.client("secretsmanager", region_name="eu-west-2")
 
 
 def test_all_dict_keys_available(mock_sm_client):
