@@ -62,7 +62,7 @@ def extract(datetime='2000-01-01 00:00'):
         raise DatabaseError("A database error has occured")
 
     except Exception as exception:
-        logging.error(f"An error has occured: {str(e)}")
+        logging.error(f"An error has occured: {str(exception)}")
 
         raise Exception ("An error has occured")
 
