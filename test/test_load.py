@@ -4,7 +4,7 @@ import pytest
 import boto3
 import os
 import logging
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 from datetime import datetime
 
 logger = logging.getLogger("test")
@@ -50,7 +50,9 @@ def test_func_raises_exception_and_logs(s3_client, caplog):
 @patch("src.extract.load_data.datetime")
 def test_func_logs_correct_time(datetime_patch, s3_client, caplog):
     datetime_patch.now().return_value = "2002-11-09T16:38:23.417667"
-    datetime_patch.now.return_value.strftime.side_effect = ["2002-11-09", "16:38:23"]
+    datetime_patch.now.return_value.strftime.side_effect = [
+        "2002-11-09", "16:38:23"
+        ]
     with caplog.at_level(logging.INFO):
         load({"all_data": {"fake": ["Data"]}})
         assert "2002-11-09" in caplog.text
@@ -73,7 +75,7 @@ def test_func_splits_data_by_table(s3_client):
     response = s3_client.list_objects_v2(Bucket="test-bucket")
     print(response)
     counter = 0
-    for i in response["Contents"]:
+    for _ in response["Contents"]:
         counter += 1
     assert response["KeyCount"] == 2
     assert counter == 2
@@ -87,19 +89,22 @@ def test_func_splits_data_by_table(s3_client):
 
 def test_func_can_log_when_empty_dict_body_uploaded(s3_client, caplog):
     with caplog.at_level(logging.INFO):
-        fake_data = {"all_data": {
-            'table1': [],
-            'table2': [],
-            'table3': [],
-            'table4': [],
-            'table5': [],
-            'table6': [],
-            'table7': [],
-            'table8': [],
-            'table9': [],
-            'table10': [],
-            'table11': []}}
-        result = load(fake_data)
+        fake_data = {
+            "all_data": {
+                "table1": [],
+                "table2": [],
+                "table3": [],
+                "table4": [],
+                "table5": [],
+                "table6": [],
+                "table7": [],
+                "table8": [],
+                "table9": [],
+                "table10": [],
+                "table11": [],
+            }
+        }
+        load(fake_data)
         assert "empty body uploaded" in caplog.text
 
 
