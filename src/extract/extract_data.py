@@ -5,9 +5,12 @@ from botocore.exceptions import ClientError
 from pprint import pprint
 import json
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
+os.environ["AWS_DEFAULT_REGION"] = "eu-west-2"
 
 def get_db_credentials(secret_name="totesys", sm_client=boto3.client("secretsmanager")):
 

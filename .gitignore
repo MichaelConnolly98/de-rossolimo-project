@@ -6,3 +6,5 @@
 */*.tfvars
 */locals.tf
 cloudwatch.py
+*coverage*
+
