@@ -13,7 +13,7 @@ resource "aws_lambda_function" "lambda_extract" {
     role =  aws_iam_role.lambda_role.arn
     handler = "extract_lambda.lambda_handler"
     runtime = "python3.12"
-    timeout = 20
+    timeout = 60
     depends_on = [ aws_s3_object.lambda_extract, aws_lambda_layer_version.dependency_layer ]
     layers = [ aws_lambda_layer_version.dependency_layer.arn ]
     environment {
