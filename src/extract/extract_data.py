@@ -63,7 +63,6 @@ def extract(datetime='2000-01-01 00:00'):
 
     except Exception as exception:
         logging.error(f"An error has occured: {str(exception)}")
-
         raise Exception ("An error has occured")
 
 
