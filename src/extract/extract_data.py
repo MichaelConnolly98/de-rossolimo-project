@@ -67,9 +67,7 @@ def extract(datetime="2000-01-01 00:00"):
 
     except Exception as exception:
         logging.error(f"An error has occured: {str(exception)}")
-
         raise Exception("An error has occured")
-
 
 def query_table(table_name, datetime):
     with get_connection() as conn:
