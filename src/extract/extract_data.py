@@ -14,6 +14,16 @@ os.environ["AWS_DEFAULT_REGION"] = "eu-west-2"
 def get_db_credentials(
         secret_name="totesys", sm_client=boto3.client("secretsmanager")
         ):
+    """
+    Connects to AWS secrets manager and retrieves secret
+
+    Parameters:
+    secret_name - default "totesys". Name of secret to retrrieve
+    sm_client - an instance of a secrets manager boto3 client
+
+    Returns:
+    Dictionary containing secret key:pairs
+    """
 
     try:
         get_secret_value_response = sm_client.get_secret_value(
@@ -28,6 +38,13 @@ def get_db_credentials(
 
 
 def get_connection():
+    """
+    Connects to PSQL database, using credentials from get_db_credentials
+    function
+
+    Returns:
+    Instance of pg8000.native Connection object
+    """
     credentials_dict = get_db_credentials()
     return Connection(
         user=credentials_dict["username"],
@@ -39,6 +56,18 @@ def get_connection():
 
 
 def extract(datetime="2000-01-01 00:00"):
+    """
+    Interacts with PSQL database, selecting all data updated from a time
+    given as a parameter
+
+    Parameters:
+    datetime - The time query used in SQL query, for which data will be
+    returned if updated after given datetime
+
+    Returns:
+    Dictionary of format {'all_data': {'table_1: data}, {'table_2: data}, ...}
+    containing all data last updated after given time
+    """
     try:
         with get_connection() as conn:
             table_names_sql_query = """
@@ -70,6 +99,17 @@ def extract(datetime="2000-01-01 00:00"):
         raise Exception("An error has occured")
 
 def query_table(table_name, datetime):
+    """
+    Queries database for individual table names and returns data
+    to extract function
+
+    Parameters:
+    table_name - name of the table, fed in by extract function
+    datetime - data to restrict search by, fed in by extract function
+
+    Returns:
+    List of dictionaries, each element representing one row in
+    """
     with get_connection() as conn:
         table_query = f"""SELECT * FROM {identifier(table_name)}
                             WHERE last_updated > {literal(datetime)};"""

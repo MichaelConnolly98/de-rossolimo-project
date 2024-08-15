@@ -8,11 +8,21 @@ from botocore.exceptions import ClientError
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-""" writes data to date encoded s3 folder split into table folders """
-
 
 def load(data):
+    """
+    Writes database data to individual table folders in s3 bucket
 
+    Data will be written to buckets in filepaths of format:
+    table={table_name}/year={year}/month={month}/day={day}/time.json
+
+    Parameters:
+    data - dictionary of format
+    {'all_data': {'table_1: data}, {'table_2: data}, ...}
+
+    Returns:
+    None
+    """
     s3 = boto3.client("s3")
     BUCKETNAME = os.environ["S3_BUCKET_NAME"]
     date = datetime.now()
