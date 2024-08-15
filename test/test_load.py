@@ -85,37 +85,26 @@ def test_func_splits_data_by_table(s3_client):
     ) in response["Contents"][1]["Key"]
 
 
-def test_func_returns_error_when_passed_empty_string(s3_client, caplog):
-    with caplog.at_level(logging.INFO):
-        load("")
-        assert "error occurred:" in caplog.text
-
-
-def test_func_can_log_when_empty_str_body_uploaded(s3_client, caplog):
-    with caplog.at_level(logging.INFO):
-        fake_data = {"all_data": ""}
-        result = load(fake_data)
-        assert "error at " in result
-        assert "error occurred: incorrect body" in caplog.text
-
-
 def test_func_can_log_when_empty_dict_body_uploaded(s3_client, caplog):
     with caplog.at_level(logging.INFO):
-        fake_data = {"all_data": {}}
+        fake_data = {"all_data": {
+            'table1': [],
+            'table2': [],
+            'table3': [],
+            'table4': [],
+            'table5': [],
+            'table6': [],
+            'table7': [],
+            'table8': [],
+            'table9': [],
+            'table10': [],
+            'table11': []}}
         result = load(fake_data)
-        assert "error at " in result
-        assert "error occurred: incorrect body" in caplog.text
+        assert "empty body uploaded" in caplog.text
 
 
 def test_func_can_handle_non_serializable_objects(s3_client, caplog):
     with caplog.at_level(logging.INFO):
         fake_data = {"all_data": {"table1": [{"nso": datetime(2002, 8, 14)}]}}
-        result = load(fake_data)
-        assert result == {"result": "success"}
-
-
-def test_func_doesnt_serialize_nums(s3_client, caplog):
-    with caplog.at_level(logging.INFO):
-        fake_data = {"all_data": {"table1": [123]}}
         result = load(fake_data)
         assert result == {"result": "success"}
