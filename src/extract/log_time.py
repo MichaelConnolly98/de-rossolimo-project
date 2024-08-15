@@ -53,7 +53,7 @@ def get_timestamp_from_logs(log_group_name='/aws/lambda/extract-de_rossolimo'):
         return {"result": "Failure", "Error": f"Exception has occured: {repr(e)}"}
     
 
-
+    
     
     return result
 
