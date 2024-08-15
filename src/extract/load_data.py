@@ -5,7 +5,7 @@ from datetime import datetime
 import logging
 from botocore.exceptions import ClientError
 
-logger = logging.getLogger("LoadLogger")
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 """ writes data to date encoded s3 folder split into table folders """
