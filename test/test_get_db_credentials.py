@@ -22,23 +22,34 @@ def aws_credentials():
 @pytest.fixture(scope="function")
 def mock_sm_client(aws_credentials):
     with mock_aws():
-        yield boto3.client("secretsmanager")
+        sm = boto3.client("secretsmanager")
+        secret_info = {
+            "username": "name",
+            "password": "pw",
+            "engine": "2-cylinder",
+            "host": "jeeves",
+            "port": "1111",
+            "dbname": "database",
+        }
+        secret_info_str = json.dumps(secret_info)
+        sm.create_secret(Name="secret", SecretString=secret_info_str)
+        yield sm
 
 
 
 def test_all_dict_keys_available(mock_sm_client):
-    secret_info = {
-        "username": "name",
-        "password": "pw",
-        "engine": "2-cylinder",
-        "host": "jeeves",
-        "port": "1111",
-        "dbname": "database",
-    }
-    secret_info_str = json.dumps(secret_info)
-    response = mock_sm_client.create_secret(Name="secret", SecretString=secret_info_str)
-    print(response)
-    assert response["ResponseMetadata"]["HTTPStatusCode"] == 200
+    # secret_info = {
+    #     "username": "name",
+    #     "password": "pw",
+    #     "engine": "2-cylinder",
+    #     "host": "jeeves",
+    #     "port": "1111",
+    #     "dbname": "database",
+    # }
+    # secret_info_str = json.dumps(secret_info)
+    # response = mock_sm_client.create_secret(Name="secret", SecretString=secret_info_str)
+    # print(response)
+    # assert response["ResponseMetadata"]["HTTPStatusCode"] == 200
     result = get_db_credentials("secret", sm_client=mock_sm_client)
     dict_keys = ["username", "password", "engine", "host", "port", "dbname"]
     for key in dict_keys:
