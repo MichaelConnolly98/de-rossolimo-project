@@ -1,4 +1,3 @@
-
 from pg8000.native import Connection, literal, identifier, DatabaseError
 import boto3
 import json
@@ -34,7 +33,7 @@ def get_connection():
     )
 
 
-def extract( datetime='2000-01-01 00:00'):
+def extract(datetime="2000-01-01 00:00"):
     with get_connection() as conn:
 
         table_names_sql_query = """
@@ -51,15 +50,14 @@ def extract( datetime='2000-01-01 00:00'):
             if element[0] != "_prisma_migrations"
         ]
 
-    
     try:
         for table_name in table_names_flattened_list:
-            
+
             with get_connection() as conn:
                 table_query = f"""SELECT * FROM {identifier(table_name)}
                                 WHERE last_updated > {literal(datetime)};"""
                 data = conn.run(table_query)
-                columns = [column['name'] for column in conn.columns]
+                columns = [column["name"] for column in conn.columns]
 
                 results_list = []
                 data_dict = {}
@@ -69,18 +67,14 @@ def extract( datetime='2000-01-01 00:00'):
                     for table in table_names_flattened_list:
                         data_dict[table] = results_list
 
-    
     except DatabaseError as e:
         logging.error(f"A database error has occured: {str(e)}")
         raise DatabaseError("A database error has occured")
 
     except Exception as exception:
         logging.error(f"An error has occured: {str(e)}")
-        raise Exception ("An error has occured")
-    
+        raise Exception("An error has occured")
 
-    
     all_data_dict = {"all_data": data_dict}
 
-    
     return all_data_dict
