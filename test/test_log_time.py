@@ -33,15 +33,11 @@ def mock_logs_client(aws_credentials):
 def mock_logs_with_stream_and_group(mock_logs_client):
     mock_logs_client.create_log_group(logGroupName="string")
 
-    mock_logs_client.create_log_stream(
-        logGroupName="string", logStreamName="string"
-        )
+    mock_logs_client.create_log_stream(logGroupName="string", logStreamName="string")
     yield mock_logs_client
 
 
-def test_get_timestamp_returns_timestamp_from_logs(
-        mock_logs_with_stream_and_group
-        ):
+def test_get_timestamp_returns_timestamp_from_logs(mock_logs_with_stream_and_group):
     mock_logs_with_stream_and_group.put_log_events(
         logGroupName="string",
         logStreamName="string",
@@ -77,9 +73,7 @@ def test_get_timestamp_returns_first_log_stream_start_time(
     assert result == "2024-08-13 10:54:51"
 
 
-def test_get_timestamp_returns_from_latest_log_stream(
-        mock_logs_with_stream_and_group
-        ):
+def test_get_timestamp_returns_from_latest_log_stream(mock_logs_with_stream_and_group):
 
     mock_logs_with_stream_and_group.put_log_events(
         logGroupName="string",
@@ -104,9 +98,7 @@ def test_get_timestamp_returns_from_latest_log_stream(
     assert result == "2024-08-13 12:53:19"
 
 
-def test_get_timestamp_raises_client_error_when_resource_not_exists(
-        mock_logs_client
-        ):
+def test_get_timestamp_raises_client_error_when_resource_not_exists(mock_logs_client):
 
     result = get_timestamp_from_logs()
     assert result["Error"]["Error"]["Code"] == "ResourceNotFoundException"

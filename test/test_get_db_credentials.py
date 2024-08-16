@@ -60,8 +60,7 @@ def test_error_handling_secret_name_not_found(mock_sm_client, caplog):
         with pytest.raises(ClientError) as e:
             get_db_credentials("does_not_exist", sm_client=mock_sm_client)
             assert (
-                str(e.value)
-                == "An error occurred (ResourceNotFoundException) "
+                str(e.value) == "An error occurred (ResourceNotFoundException) "
                 "when calling the GetSecretValue operation: "
                 "Secrets Manager can't find the specified secret."
             )
