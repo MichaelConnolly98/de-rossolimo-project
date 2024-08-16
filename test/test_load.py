@@ -113,3 +113,10 @@ def test_func_can_handle_non_serializable_objects(s3_client, caplog):
         fake_data = {"all_data": {"table1": [{"nso": datetime(2002, 8, 14)}]}}
         result = load(fake_data)
         assert result == {"result": "success"}
+
+def test_error_is_raised_when_TypeError_occurs(s3_client, caplog):
+    with caplog.at_level(logging.ERROR):
+        with pytest.raises(TypeError) as e:
+            load({5})
+        assert str(e.value) == "A TypeError has occured"
+        assert "error occurred" in caplog.text

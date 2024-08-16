@@ -30,14 +30,14 @@ def load(data):
     folder_name_2 = datetime.now().strftime("%H:%M:%S")
     counter = 0
 
-    for table in data["all_data"]:
-        if not data["all_data"][table]:
-            counter += 1
-
-    if counter == len(data["all_data"]):
-        logger.warning("All tables uploaded as empty files")
-
     try:
+        for table in data["all_data"]:
+            if not data["all_data"][table]:
+                counter += 1
+
+        if counter == len(data["all_data"]):
+            logger.warning("All tables uploaded as empty files")
+
         for key, value in data["all_data"].items():
             s3.put_object(
                 Bucket=(BUCKETNAME),
@@ -65,7 +65,7 @@ def load(data):
 
     except TypeError as t:
         logger.error(f"error occurred: {repr(t)}")
-        return t
+        raise TypeError(f"A TypeError has occured")
 
     except ClientError as c:
         logger.error(f"error occurred: {c.response}")
