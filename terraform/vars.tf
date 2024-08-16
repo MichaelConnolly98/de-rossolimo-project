@@ -14,3 +14,7 @@ variable "extract_lambda" {
     default = "extract"
 }
 
+variable "emails" {
+  type = string
+  sensitive = true
+}

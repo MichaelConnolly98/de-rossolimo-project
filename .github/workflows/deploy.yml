@@ -50,7 +50,7 @@ jobs:
     - name: Plan
       working-directory: terraform
       env:
-        TF_VAR_local_email: ${{ secrets.LOCAL }}
+        TF_VAR_emails: ${{ secrets.EMAIL }}
       run: terraform plan
     - name: Apply
       working-directory: terraform
