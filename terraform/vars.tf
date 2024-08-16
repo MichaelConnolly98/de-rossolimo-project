@@ -21,7 +21,6 @@ variable "transform_lambda" {
 
 variable "emails" {
   type = list(string)
-  sensitive = true
 }
 
 variable "processed_data_bucket_prefix" {
