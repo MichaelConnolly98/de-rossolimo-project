@@ -46,6 +46,8 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     - name: Init
       working-directory: terraform
+      env:
+        local.email: ${{ secrets.LOCAL }}
       run: terraform init 
     - name: Plan
       working-directory: terraform
