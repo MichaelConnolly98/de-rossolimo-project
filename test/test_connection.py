@@ -3,12 +3,6 @@ from pg8000.native import Connection, DatabaseError, InterfaceError
 from unittest.mock import patch
 import pytest
 
-
-#test connection is returned
-#test database error is caught, and exception is caught
-#test logs are returned 
-#
-
 def test_get_connection_returns_connection_object():
     result = get_connection()
     assert isinstance(result, Connection)
