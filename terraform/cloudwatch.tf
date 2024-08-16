@@ -56,3 +56,19 @@ resource "aws_sns_topic_subscription" "duration_exceeded" {
   protocol  = "email"
   endpoint = each.value
 }
+
+#########################
+# transform lambda cloudwatch
+#########################
+
+resource "aws_cloudwatch_log_metric_filter" "lambda_error" {
+  name = "ERROR"
+  pattern = "ERROR"
+  log_group_name = "/aws/lambda/extract-de_rossolimo"
+
+    metric_transformation {
+    name = "ErrorOccur"
+    namespace = "LambdaTransformRossolimoNameSpace"
+    value = "1"
+  }
+}

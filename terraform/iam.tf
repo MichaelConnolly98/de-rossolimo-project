@@ -136,7 +136,7 @@ data "aws_iam_policy_document" "transform_s3_doc" {
     resources = [
       "${aws_s3_bucket.data_bucket.arn}/*",
       "${aws_s3_bucket.code_bucket.arn}/*",
-      "${aws_s3_bucket.processed_data_bucket.arn}"
+      "${aws_s3_bucket.processed_data_bucket.arn}/*"
     ]
   }
 }
