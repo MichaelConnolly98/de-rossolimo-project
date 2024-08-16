@@ -1,5 +1,4 @@
-from pg8000.native import Connection, literal, identifier, DatabaseError,\
-InterfaceError
+from pg8000.native import Connection, literal, identifier, DatabaseError, InterfaceError
 import boto3
 from botocore.exceptions import ClientError
 import json
@@ -44,7 +43,7 @@ def get_connection():
     """
     try:
         credentials_dict = get_db_credentials()
-        
+
         return Connection(
             user=credentials_dict["username"],
             password=credentials_dict["password"],
@@ -53,16 +52,25 @@ def get_connection():
             port=credentials_dict["port"],
         )
     except DatabaseError as e:
-        logging.error({"Result": "Failure",\
-        "Error": f"A database error has occured: {str(e)}"})
+        logging.error(
+            {"Result": "Failure", "Error": f"A database error has occured: {str(e)}"}
+        )
         raise DatabaseError("A database connection error has occured")
     except InterfaceError as interr:
-        logging.error({"Result": "Failure",\
-        "Error": f"A database connection error has occured: {str(interr)}"})
+        logging.error(
+            {
+                "Result": "Failure",
+                "Error": f"A database connection error has occured: {str(interr)}",
+            }
+        )
         raise InterfaceError
     except Exception as err:
-        logging.error({"Result": "Failure",\
-        "Error": f"A database connection error has occured: {str(err)}"})
+        logging.error(
+            {
+                "Result": "Failure",
+                "Error": f"A database connection error has occured: {str(err)}",
+            }
+        )
         raise Exception("An error has occured")
 
 
