@@ -66,5 +66,16 @@ resource "aws_s3_bucket" "processed_data_bucket" {
     }
 }
 
+# upload transform archive code to lambda code bucket
+resource "aws_s3_object" "lambda_transform" {
+  bucket = aws_s3_bucket.code_bucket.bucket
+  key = "lambda/transform.zip"
+  source = "${path.module}/../lambda_packages/transform.zip"
+  etag = filemd5("${path.module}/../lambda_packages/transform.zip")
+  depends_on = [ data.archive_file.lambda_transform_data]
+}
+
+
+
 
 

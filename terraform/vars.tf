@@ -14,6 +14,11 @@ variable "extract_lambda" {
   default = "extract"
 }
 
+variable "transform_lambda" {
+  type = string
+  default = "extract"
+}
+
 variable "emails" {
   type = list(string)
   sensitive = true
