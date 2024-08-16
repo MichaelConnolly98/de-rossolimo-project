@@ -46,16 +46,12 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     - name: Init
       working-directory: terraform
-      env:
-        local.email: ${{ secrets.LOCAL }}
       run: terraform init 
     - name: Plan
       working-directory: terraform
       env:
-        local.email: ${{ secrets.LOCAL }}
+        TF_VAR_local_email: ${{ secrets.LOCAL }}
       run: terraform plan
     - name: Apply
       working-directory: terraform
-      env:
-        local.email: ${{ secrets.LOCAL }}
       run: terraform apply --auto-approve
