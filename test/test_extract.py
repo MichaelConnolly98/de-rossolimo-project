@@ -33,13 +33,13 @@ def test_database_error_raised_when_invalid_argument_given_to_extract_function(
     with caplog.at_level(logging.ERROR):
         with pytest.raises(DatabaseError) as e:
             extract("staff")
-            assert str(e.value) == "A database error has occured"
-            assert "A database error has occured" in caplog.text
+        assert str(e.value) == "A database error has occured"
+        assert "A database error has occured" in caplog.text
 
 @patch("src.extract.extract_data.get_connection", side_effect=Exception)
-def test_error_is_raised_when_exception_occurs(caplog):
+def test_error_is_raised_when_exception_occurs(mock_connection, caplog):
     with caplog.at_level(logging.ERROR):
         with pytest.raises(Exception) as e:
             extract()
-            assert str(e.value) == "An error has occured"
-            assert "An error has occured" in caplog.text
+        assert str(e.value) == "An error has occured"
+        assert "An error has occured" in caplog.text
