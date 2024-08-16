@@ -13,7 +13,7 @@ def get_timestamp_from_logs(log_group_name="/aws/lambda/extract-de_rossolimo"):
     Gets the time of the most recent cloudwatch log event that was not
     an error for the provided log group name
 
-    Args:
+    Parameters:
     log_group_name: name of log group you require event time from
 
     returns:
