@@ -50,9 +50,7 @@ def test_func_raises_exception_and_logs(s3_client, caplog):
 @patch("src.extract.load_data.datetime")
 def test_func_logs_correct_time(datetime_patch, s3_client, caplog):
     datetime_patch.now().return_value = "2002-11-09T16:38:23.417667"
-    datetime_patch.now.return_value.strftime.side_effect = [
-        "2002-11-09", "16:38:23"
-        ]
+    datetime_patch.now.return_value.strftime.side_effect = ["2002-11-09", "16:38:23"]
     with caplog.at_level(logging.INFO):
         load({"all_data": {"fake": ["Data"]}})
         assert "2002-11-09" in caplog.text

@@ -72,7 +72,5 @@ def load(data):
         return c
 
     except Exception as e:
-        logger.error(
-            f"error occurred while trying to upload to s3 bucket: {repr(e)}"
-            )
+        logger.error(f"error occurred while trying to upload to s3 bucket: {repr(e)}")
         return e
