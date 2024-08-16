@@ -1,3 +1,4 @@
+#bucket which stores data extracted from totesys warehouse
 resource "aws_s3_bucket" "data_bucket" {
   bucket_prefix = "${var.ingestion_bucket_prefix}-"
   tags = {
@@ -6,6 +7,7 @@ resource "aws_s3_bucket" "data_bucket" {
   }
 }
 
+#resource to apply versioning to data bucket above
 resource "aws_s3_bucket_versioning" "data_bucket" {
   bucket = aws_s3_bucket.data_bucket.id
 
@@ -14,6 +16,7 @@ resource "aws_s3_bucket_versioning" "data_bucket" {
   }
 }
 
+#resource to add rule to bucket that keeps data immutable
 resource "aws_s3_bucket_object_lock_configuration" "data_bucket" {
   depends_on = [ aws_s3_bucket_versioning.data_bucket ]
   bucket = aws_s3_bucket.data_bucket.id
@@ -26,11 +29,7 @@ resource "aws_s3_bucket_object_lock_configuration" "data_bucket" {
   }
 }
 
-
-
-
-
-
+#s3 bucket that contains lambda code 
 resource "aws_s3_bucket" "code_bucket" {
   bucket_prefix = "${var.code_bucket_prefix}-"
   tags = {
@@ -39,8 +38,7 @@ resource "aws_s3_bucket" "code_bucket" {
   }
 }
 
-
-
+#upload extractlambda archive file to lambda code bucket
 resource "aws_s3_object" "lambda_extract" {
   bucket = aws_s3_bucket.code_bucket.bucket
   key = "lambda/extract.zip"
@@ -49,11 +47,24 @@ resource "aws_s3_object" "lambda_extract" {
   depends_on = [ data.archive_file.lambda_extract ]
 }
 
+#upload extract lambda layer code to lambda code bucket
 resource "aws_s3_object" "layer_code" {
   bucket = aws_s3_bucket.code_bucket.bucket
   key = "lambda/layer.zip"
   # etag = filemd5("${path.module}/../layer.zip")
   source = "${path.module}/../layer.zip"
 }
+
+##########################
+#bucket for processed data
+##########################
+resource "aws_s3_bucket" "processed_data_bucket" {
+  bucket_prefix = "${var.code_bucket_prefix}-"
+  tags = {
+    BucketType = "ProcessedData"
+    BucketFunction = "HoldsProcessedData"
+    }
+}
+
 
 
