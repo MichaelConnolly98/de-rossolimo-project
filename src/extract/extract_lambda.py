@@ -1,8 +1,6 @@
 from extract_data import extract
 from load_data import load
 from log_time import get_timestamp_from_logs
-import os
-import pprint
 import logging
 
 logger = logging.getLogger(__name__)
