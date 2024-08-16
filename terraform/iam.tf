@@ -49,7 +49,7 @@ resource "aws_iam_role_policy_attachment" "lambda_s3_policy_attachment" {
 
 
 #####################
-#cloudwatch policy and role (and attachment to lambda)
+#cloudwatch policy and role (and attachment to extract lambda)
 #####################
 
 
@@ -98,4 +98,57 @@ resource "aws_iam_role_policy" "sm_policy" {
       },
     ]
   })
+}
+
+
+##############################
+#transform lambda IAM roles and permissions
+##############################
+
+resource "aws_iam_role" "transform_lambda_role" {
+  name_prefix        = "role-de-rossolimo-lambdas-"
+  assume_role_policy = <<EOF
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "sts:AssumeRole"
+                ],
+                "Principal": {
+                    "Service": [
+                        "lambda.amazonaws.com"
+                    ]
+                }
+            }
+        ]
+    }
+    EOF
+}
+
+
+data "aws_iam_policy_document" "transform_s3_doc" {
+  statement {
+
+    actions = [ "s3:PutObject", "s3:GetObject" ]
+
+    resources = [
+      "${aws_s3_bucket.data_bucket.arn}/*",
+      "${aws_s3_bucket.code_bucket.arn}/*",
+      "${aws_s3_bucket.processed_data_bucket.arn}"
+    ]
+  }
+}
+
+#create
+resource "aws_iam_policy" "transform_s3_policy" {
+  name_prefix = "s3-policy-transform-lambda-"
+  policy      = data.aws_iam_policy_document.transform_s3_document.json
+}
+
+# Attach
+resource "aws_iam_role_policy_attachment" "transform_lambda_s3_policy_attachment" {
+  role = aws_iam_role.transform_lambda_role.name
+  policy_arn = aws_iam_policy.transform_s3_policy.arn
 }
