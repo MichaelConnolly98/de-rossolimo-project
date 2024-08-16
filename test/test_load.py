@@ -105,7 +105,7 @@ def test_func_can_log_when_empty_dict_body_uploaded(s3_client, caplog):
             }
         }
         load(fake_data)
-        assert "empty body uploaded" in caplog.text
+        assert "All tables uploaded as empty files" in caplog.text
 
 
 def test_func_can_handle_non_serializable_objects(s3_client, caplog):
