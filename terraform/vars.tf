@@ -15,6 +15,6 @@ variable "extract_lambda" {
 }
 
 variable "emails" {
-  type = string
+  type = list(string)
   sensitive = true
 }
