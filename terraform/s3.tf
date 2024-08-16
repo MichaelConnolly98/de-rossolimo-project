@@ -6,6 +6,30 @@ resource "aws_s3_bucket" "data_bucket" {
   }
 }
 
+resource "aws_s3_bucket_versioning" "data_bucket" {
+  bucket = aws_s3_bucket.data_bucket.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_object_lock_configuration" "data_bucket" {
+  depends_on = [ aws_s3_bucket_versioning.data_bucket ]
+  bucket = aws_s3_bucket.data_bucket.id
+
+  rule {
+    default_retention {
+      mode = "GOVERNANCE"
+      days = 3626
+    }
+  }
+}
+
+
+
+
+
 
 resource "aws_s3_bucket" "code_bucket" {
   bucket_prefix = "${var.code_bucket_prefix}-"
