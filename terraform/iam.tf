@@ -63,7 +63,7 @@ data "aws_iam_policy_document" "cw_document" {
   }
   statement {
      effect = "Allow"
-      actions = [ "logs:CreateLogStream", "logs:PutLogEvents", "logs:DescribeLogStreams" ]
+      actions = [ "logs:CreateLogStream", "logs:PutLogEvents", "logs:DescribeLogStreams", "logs:FilterLogEvents" ]
       resources = ["arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/extract-de_rossolimo:*"]
   }
 }
