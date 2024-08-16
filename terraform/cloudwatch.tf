@@ -28,8 +28,8 @@ resource "aws_sns_topic" "error_sns_topic" {
 }
 
 resource "aws_sns_topic_subscription" "email_great_quote" {
-  count = length(local.emails)
+  for_each = toset("${var.emails}")
   topic_arn = aws_sns_topic.error_sns_topic.arn
   protocol  = "email"
-  endpoint = local.emails[count.index]
+  endpoint = each.value
 }

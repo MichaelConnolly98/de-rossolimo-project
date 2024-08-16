@@ -3,7 +3,7 @@ from unittest.mock import patch
 # from src.extract.extract_data import extract_func
 # from src.extract.load_data import load
 # from src.extract.log_time import get_timestamp_from_logs
-#from src.extract.extract_lambda import lambda_handler
+# from src.extract.extract_lambda import lambda_handler
 # from src.extract.extract_lambda import lambda_handler, extract_func, load, get_timestamp_from_logs
 import logging
 
