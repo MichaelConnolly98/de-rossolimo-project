@@ -51,7 +51,11 @@ jobs:
       run: terraform init 
     - name: Plan
       working-directory: terraform
+      env:
+        local.email: ${{ secrets.LOCAL }}
       run: terraform plan
     - name: Apply
       working-directory: terraform
+      env:
+        local.email: ${{ secrets.LOCAL }}
       run: terraform apply --auto-approve
