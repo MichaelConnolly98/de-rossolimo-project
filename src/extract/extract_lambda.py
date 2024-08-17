@@ -1,6 +1,6 @@
-from extract_data import extract_func
-from load_data import load
-from log_time import get_timestamp_from_logs
+from utils.extract_data import extract_func
+from utils.load_data import load
+from utils.log_time import get_timestamp_from_logs
 import logging
 
 logger = logging.getLogger(__name__)
@@ -25,7 +25,9 @@ def lambda_handler(event, context):
         logger.info({"Result": "Success", "Message": "Extract Lambda ran successfully"})
     except Exception as e:
         logger.error(
-            {"Result": "Failure",\
-            "Error": f"Unexpected Exception occured in lambda_handler: {str(e)}"})
+            {
+                "Result": "Failure",
+                "Error": f"Unexpected Exception occured in lambda_handler: {str(e)}",
+            }
+        )
         raise e
-
