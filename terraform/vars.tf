@@ -9,6 +9,11 @@ variable "code_bucket_prefix" {
   default = "de-rossolimo-code"
 }
 
+variable "process_bucket_prefix" {
+  type = string
+  default = "de-rossolimo-processed"
+}
+
 variable "extract_lambda" {
   type = string
   default = "extract"

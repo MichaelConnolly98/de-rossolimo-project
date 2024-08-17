@@ -67,7 +67,7 @@ resource "aws_s3_object" "util_layer_code" {
 #bucket for processed data
 ##########################
 resource "aws_s3_bucket" "processed_data_bucket" {
-  bucket_prefix = "${var.code_bucket_prefix}-"
+  bucket_prefix = "${var.process_bucket_prefix}-"
   tags = {
     BucketType = "ProcessedData"
     BucketFunction = "HoldsProcessedData"
