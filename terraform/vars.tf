@@ -16,7 +16,7 @@ variable "extract_lambda" {
 
 variable "transform_lambda" {
   type = string
-  default = "extract"
+  default = "transform"
 }
 
 variable "emails" {

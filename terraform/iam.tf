@@ -144,7 +144,7 @@ data "aws_iam_policy_document" "transform_s3_doc" {
 #create
 resource "aws_iam_policy" "transform_s3_policy" {
   name_prefix = "s3-policy-transform-lambda-"
-  policy      = data.aws_iam_policy_document.transform_s3_document.json
+  policy      = data.aws_iam_policy_document.transform_s3_doc.json
 }
 
 # Attach

@@ -16,8 +16,8 @@ resource "aws_lambda_function" "lambda_extract" {
     handler = "extract_lambda.lambda_handler"
     runtime = "python3.12"
     timeout = 60
-    depends_on = [ aws_s3_object.lambda_extract, aws_lambda_layer_version.dependency_layer ]
-    layers = [ aws_lambda_layer_version.dependency_layer.arn ]
+    depends_on = [ aws_s3_object.lambda_extract, aws_lambda_layer_version.dependency_layer, aws_lambda_layer_version.utility_layer ]
+    layers = [ aws_lambda_layer_version.dependency_layer.arn, aws_lambda_layer_version.utility_layer.arn ]
     environment {
       variables = {
         S3_BUCKET_NAME = aws_s3_bucket.data_bucket.id
@@ -42,16 +42,34 @@ resource "aws_lambda_layer_version" "dependency_layer" {
   depends_on = [ aws_s3_object.layer_code ]
   source_code_hash = data.archive_file.layer.output_base64sha256
 }
+####################################
+#utility layer
+####################################
+data "archive_file" "util_layer" {
+  type = "zip"
+  output_file_mode = "0666"
+  source_dir =     "${path.module}/../layer_utils"
+  output_path      = "${path.module}/../lambda_packages/utils.zip"
+}
+
+resource "aws_lambda_layer_version" "utility_layer" {
+  layer_name          = "utility_layer"
+  compatible_runtimes = [ "python3.12" ]
+  s3_bucket           = aws_s3_bucket.code_bucket.bucket
+  s3_key              = "lambda/utils.zip"
+  depends_on = [ aws_s3_object.util_layer_code ]
+  source_code_hash = data.archive_file.util_layer.output_base64sha256
+}
 
 
 ####################################
-#Transfor Lambda Resources below
+#Transform Lambda Resources below
 ####################################
 data "archive_file" "lambda_transform_data" {
   type = "zip"
   output_file_mode = "0666"
   source_dir = "${path.module}/../src/transform"
-  output_path = "${path.module}/../lambda_packages/transofrm.zip"
+  output_path = "${path.module}/../lambda_packages/transform.zip"
 }
 
 resource "aws_lambda_function" "lambda_transform" {
