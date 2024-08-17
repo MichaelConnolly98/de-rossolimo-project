@@ -9,12 +9,10 @@ every time a commit is pushed to github main branch
 import shutil
 import os
 
-
 try:
     shutil.rmtree('layer_utils/python/utils')
 except FileNotFoundError:
     pass
-
 
 #copy files in to directory
 src_dir = "./utils"
