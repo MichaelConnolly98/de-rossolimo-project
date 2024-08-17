@@ -26,6 +26,9 @@ def get_db_credentials(secret_name="totesys", sm_client=boto3.client("secretsman
     try:
         get_secret_value_response = sm_client.get_secret_value(SecretId=secret_name)
     except ClientError as e:
+        logging.error(
+            {"Result": "Failure", "Error": f"A secrets manager error has occured: {str(e)}"}
+        )
         raise e
 
     secret = json.loads(get_secret_value_response["SecretString"])
@@ -63,15 +66,15 @@ def get_connection():
                 "Error": f"A database connection error has occured: {str(interr)}",
             }
         )
-        raise InterfaceError
+        raise InterfaceError("A database connection error has occured")
     except Exception as err:
         logging.error(
             {
                 "Result": "Failure",
-                "Error": f"A database connection error has occured: {str(err)}",
+                "Error": f"A database connection exception has occured: {str(err)}",
             }
         )
-        raise Exception("An error has occured")
+        raise Exception("A database connection exception has occured")
 
 
 def extract_func(datetime="2000-01-01 00:00"):
@@ -110,11 +113,11 @@ def extract_func(datetime="2000-01-01 00:00"):
         return all_data_dict
 
     except DatabaseError as e:
-        logging.error(f"A database error has occured: {str(e)}")
+        logging.error({"Result": "Failure", "Error": f"A database error has occured: {str(e)}"})
         raise DatabaseError("A database error has occured")
 
     except Exception as exception:
-        logging.error(f"An error has occured: {str(exception)}")
+        logging.error({"Result": "Failure", "Error": f"An exception has occured: {str(exception)}"})
         raise Exception("An error has occured")
 
 
@@ -130,14 +133,22 @@ def query_table(table_name, datetime):
     Returns:
     List of dictionaries, each element representing one row in
     """
-    with get_connection() as conn:
-        table_query = f"""SELECT * FROM {identifier(table_name)}
-                            WHERE last_updated > {literal(datetime)};"""
-        data = conn.run(table_query)
-        columns = [column["name"] for column in conn.columns]
+    try:
+        with get_connection() as conn:
+            table_query = f"""SELECT * FROM {identifier(table_name)}
+                                WHERE last_updated > {literal(datetime)};"""
+            data = conn.run(table_query)
+            columns = [column["name"] for column in conn.columns]
 
-        results_list = []
-        for row in data:
-            result = dict(zip(columns, row))
-            results_list.append(result)
-        return results_list
+            results_list = []
+            for row in data:
+                result = dict(zip(columns, row))
+                results_list.append(result)
+            return results_list
+    except DatabaseError as e:
+        logging.error({"Result": "Failure", "Error": f"A database query error has occured: {str(e)}"})
+        raise DatabaseError("A database query error has occured")
+
+    except Exception as exception:
+        logging.error({"Result": "Failure", "Error": f"An exception has occured: {str(exception)}"})
+        raise Exception("A query exception has occured")

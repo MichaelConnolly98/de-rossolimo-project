@@ -55,8 +55,8 @@ def get_timestamp_from_logs(log_group_name="/aws/lambda/extract-de_rossolimo"):
 
     except ClientError as c:
         logger.error({"Result": "Failure", "Error": c.response})
+        raise c
 
-        return {"Result": "Failure", "Error": c.response}
     except InvalidInput as i:
         logger.error(
             {
@@ -64,12 +64,12 @@ def get_timestamp_from_logs(log_group_name="/aws/lambda/extract-de_rossolimo"):
                 "Error": "log_group_name parameter must be a valid log group",
             }
         )
-        return {"Result": "Failure", "Error": repr(i)}
+        raise i
 
     except Exception as e:
         logger.error(
-            {"Result": "Failure", "Error": f"Exception has occured: {repr(e)}"}
+            {"Result": "Failure", "Error": f"Exception has occured: {str(e)}"}
         )
-        return {"Result": "Failure", "Error": f"Exception has occured: {repr(e)}"}
+        raise e
 
     return result

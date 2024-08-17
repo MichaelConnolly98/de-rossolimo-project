@@ -35,16 +35,16 @@ def s3_client(aws_creds):
 
 def test_func_loads_object_and_logs(s3_client, caplog):
     with caplog.at_level(logging.INFO):
-        assert load({"all_data": {"fake": ["Data"]}}) == {"result": "success"}
-        assert "success" in caplog.text
+        assert load({"all_data": {"fake": ["Data"]}}) == {"result": "success", "message": "data uploaded"}
+        assert "'result': 'success', 'message': " in caplog.text
 
 
 @patch("src.extract.load_data.boto3.client", side_effect=Exception)
-def test_func_raises_exception_and_logs(s3_client, caplog):
+def test_func_raises_exception_and_logs(patch_client, caplog):
     with caplog.at_level(logging.INFO):
         with pytest.raises(Exception):
             load({"all_data": {"fake": ["Data"]}})
-            assert "error" in caplog.text
+        "Exception occurred on upload to s3 bucket" in caplog.text
 
 
 @patch("src.extract.load_data.datetime")
@@ -53,7 +53,7 @@ def test_func_logs_correct_time(datetime_patch, s3_client, caplog):
     datetime_patch.now.return_value.strftime.side_effect = ["2002-11-09", "16:38:23"]
     with caplog.at_level(logging.INFO):
         load({"all_data": {"fake": ["Data"]}})
-        assert "2002-11-09" in caplog.text
+    assert "2002-11-09" in caplog.text
 
 
 def test_func_splits_data_by_table(s3_client):
@@ -103,11 +103,11 @@ def test_func_can_log_when_empty_dict_body_uploaded(s3_client, caplog):
             }
         }
         load(fake_data)
-        assert "All tables uploaded as empty files" in caplog.text
+    assert "All tables will be uploaded as empty files" in caplog.text
 
 
 def test_func_can_handle_non_serializable_objects(s3_client, caplog):
     with caplog.at_level(logging.INFO):
         fake_data = {"all_data": {"table1": [{"nso": datetime(2002, 8, 14)}]}}
         result = load(fake_data)
-        assert result == {"result": "success"}
+    assert result == {"result": "success", "message": "data uploaded"}
