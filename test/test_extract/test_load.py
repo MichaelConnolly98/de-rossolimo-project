@@ -1,4 +1,4 @@
-from src.extract.load_data import load
+from utils.load_data import load
 from moto import mock_aws
 import pytest
 import boto3
@@ -35,11 +35,14 @@ def s3_client(aws_creds):
 
 def test_func_loads_object_and_logs(s3_client, caplog):
     with caplog.at_level(logging.INFO):
-        assert load({"all_data": {"fake": ["Data"]}}) == {"result": "success", "message": "data uploaded"}
+        assert load({"all_data": {"fake": ["Data"]}}) == {
+            "result": "success",
+            "message": "data uploaded",
+        }
         assert "'result': 'success', 'message': " in caplog.text
 
 
-@patch("src.extract.load_data.boto3.client", side_effect=Exception)
+@patch("utils.load_data.boto3.client", side_effect=Exception)
 def test_func_raises_exception_and_logs(patch_client, caplog):
     with caplog.at_level(logging.INFO):
         with pytest.raises(Exception):
@@ -47,7 +50,7 @@ def test_func_raises_exception_and_logs(patch_client, caplog):
         "Exception occurred on upload to s3 bucket" in caplog.text
 
 
-@patch("src.extract.load_data.datetime")
+@patch("utils.load_data.datetime")
 def test_func_logs_correct_time(datetime_patch, s3_client, caplog):
     datetime_patch.now().return_value = "2002-11-09T16:38:23.417667"
     datetime_patch.now.return_value.strftime.side_effect = ["2002-11-09", "16:38:23"]
