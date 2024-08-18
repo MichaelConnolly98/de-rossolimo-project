@@ -110,6 +110,7 @@ def extract_func(datetime="2000-01-01 00:00"):
             data_dict[table] = query_table(table, datetime)
 
         all_data_dict = {"all_data": data_dict}
+        logger.info({"Result": "Success", "Message": "extract function ran successfully"})
         return all_data_dict
 
     except DatabaseError as e:

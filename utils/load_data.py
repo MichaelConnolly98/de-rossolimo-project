@@ -66,8 +66,8 @@ def load(data):
                 raise BodyNotUploadedError(
                     f"error at {folder_name} {folder_name_2}")
 
-        logger.info({"result": "success", "message": f"data uploaded at {folder_name} {folder_name_2}"})
-        return {"result": "success", "message": "data uploaded"}
+        logger.info({"Result": "Success", "Message": f"data uploaded at {folder_name} {folder_name_2}"})
+        return {"Result": "Success", "Message": "data uploaded"}
 
     except TypeError as t:
         logger.error({"Result": "Failure", "Error": f"TypeError occurred: {str(t)}"})

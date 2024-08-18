@@ -36,10 +36,10 @@ def s3_client(aws_creds):
 def test_func_loads_object_and_logs(s3_client, caplog):
     with caplog.at_level(logging.INFO):
         assert load({"all_data": {"fake": ["Data"]}}) == {
-            "result": "success",
-            "message": "data uploaded",
+            "Result": "Success",
+            "Message": "data uploaded",
         }
-        assert "'result': 'success', 'message': " in caplog.text
+        assert "'Result': 'Success', 'Message': " in caplog.text
 
 
 @patch("utils.load_data.boto3.client", side_effect=Exception)
@@ -113,4 +113,4 @@ def test_func_can_handle_non_serializable_objects(s3_client, caplog):
     with caplog.at_level(logging.INFO):
         fake_data = {"all_data": {"table1": [{"nso": datetime(2002, 8, 14)}]}}
         result = load(fake_data)
-    assert result == {"result": "success", "message": "data uploaded"}
+    assert result == {"Result": "Success", "Message": "data uploaded"}
