@@ -8,14 +8,15 @@ every time a commit is pushed to github main branch
 
 import shutil
 import os
+def test_copy_files_to_layer_utils_directory():
+    try:
+        shutil.rmtree('layer_utils/python/utils')
+    except FileNotFoundError:
+        pass
 
-try:
-    shutil.rmtree('layer_utils/python/utils')
-except FileNotFoundError:
-    pass
-
-#copy files in to directory
-src_dir = "./utils"
-dest_dir = "./layer_utils/python/utils"
-files = os.listdir(src_dir)
-shutil.copytree(src_dir, dest_dir)
+    #copy files in to directory
+    src_dir = "./utils"
+    dest_dir = "./layer_utils/python/utils"
+    files = os.listdir(src_dir)
+    shutil.copytree(src_dir, dest_dir)
+    assert True
