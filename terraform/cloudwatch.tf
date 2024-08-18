@@ -73,7 +73,7 @@ resource aws_cloudwatch_metric_alarm "all_lambdas_errors_alarm" {
   alarm_description   = "Lambdas with errors"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
-  threshold           = 0
+  threshold           = 1
   period              = 60
   unit                = "Count"
 
