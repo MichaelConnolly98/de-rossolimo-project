@@ -1,10 +1,7 @@
 from utils.extract_data import extract_func
 import boto3
-from datetime import datetime
 import json
 import pytest
-from pprint import pprint
-
 
 with open("s3_bucket_name.txt", "r", encoding="utf-8") as f:
     S3_BUCKET_NAME = f.readline()
