@@ -1,1 +1,2 @@
-"placeholder so not empty"
+def lambda_handler(event, context):
+    pass

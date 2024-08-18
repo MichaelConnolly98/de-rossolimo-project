@@ -78,7 +78,7 @@ resource "aws_lambda_function" "lambda_transform" {
      s3_bucket = aws_s3_bucket.code_bucket.bucket
      s3_key = "lambda/transform.zip"
      role =  aws_iam_role.transform_lambda_role.arn
-     handler = "transform_lambda.lambda_handler"
+     handler = "extract_bucket.lambda_handler"
      runtime = "python3.12"
      timeout = 60
      depends_on = [ aws_s3_object.lambda_transform, aws_lambda_layer_version.dependency_layer ]

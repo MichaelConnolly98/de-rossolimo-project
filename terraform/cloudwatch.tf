@@ -1,3 +1,7 @@
+########################
+#extract lambda cloudwatch
+########################
+
 resource "aws_cloudwatch_log_metric_filter" "error" {
   name = "ERROR"
   pattern = "ERROR"
@@ -61,14 +65,21 @@ resource "aws_sns_topic_subscription" "duration_exceeded" {
 # transform lambda cloudwatch
 #########################
 
-resource "aws_cloudwatch_log_metric_filter" "lambda_error" {
-  name = "ERROR"
-  pattern = "ERROR"
-  log_group_name = "/aws/lambda/extract-de_rossolimo"
+#########################
+#attempt to make alarm trigger off any error in any lambda
+#########################
+resource aws_cloudwatch_metric_alarm "all_lambdas_errors_alarm" {
+  alarm_name          = "all-lambdas-errors"
+  alarm_description   = "Lambdas with errors"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = 1
+  threshold           = 0
+  period              = 60
+  unit                = "Count"
 
-    metric_transformation {
-    name = "ErrorOccur"
-    namespace = "LambdaTransformRossolimoNameSpace"
-    value = "1"
-  }
+  namespace   = "AWS/Lambda"
+  metric_name = "Errors"
+  statistic   = "Maximum"
+
+  alarm_actions = [aws_sns_topic.duration_sns_topic.arn, aws_sns_topic.error_sns_topic.arn]
 }

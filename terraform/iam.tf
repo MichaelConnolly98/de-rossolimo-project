@@ -64,7 +64,8 @@ data "aws_iam_policy_document" "cw_document" {
   statement {
      effect = "Allow"
       actions = [ "logs:CreateLogStream", "logs:PutLogEvents", "logs:DescribeLogStreams", "logs:FilterLogEvents" ]
-      resources = ["arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/extract-de_rossolimo:*"]
+      resources = [ "arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/extract-de_rossolimo:*", 
+      "arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/transform-de_rossolimo:*"]
   }
 }
 
@@ -106,7 +107,7 @@ resource "aws_iam_role_policy" "sm_policy" {
 ##############################
 
 resource "aws_iam_role" "transform_lambda_role" {
-  name_prefix        = "role-de-rossolimo-lambdas-"
+  name_prefix        = "role-de-rossolimo-transform-lambdas-"
   assume_role_policy = <<EOF
     {
         "Version": "2012-10-17",
@@ -151,4 +152,14 @@ resource "aws_iam_policy" "transform_s3_policy" {
 resource "aws_iam_role_policy_attachment" "transform_lambda_s3_policy_attachment" {
   role = aws_iam_role.transform_lambda_role.name
   policy_arn = aws_iam_policy.transform_s3_policy.arn
+}
+
+###########################
+#transform lambda cloudwatch policy and attachment
+###########################
+
+# attaches transform_lambda to cloudwatch policy (same as extract CW policy)
+resource "aws_iam_role_policy_attachment" "transform_lambda_cw_policy_attachment" {
+  role = aws_iam_role.transform_lambda_role.name
+  policy_arn = aws_iam_policy.cw_policy.arn
 }
