@@ -20,6 +20,8 @@ jobs:
         python-version: '3.12'
     - name: Run Requirements
       run: make requirements
+    - name: Run create-lambda-layer
+      run: make create-lambda
     - name: Run dev-setup
       run: make dev-setup
     - name: Run Tests
