@@ -47,6 +47,9 @@ lambda-layer:
 zip-lambda-layer:
 	$(call execute_in_env, zip -r $(.layer/python).zip)
 
+# create layer and zip layer
+create-lambda: lambda-layer zip-lambda-layer
+
 ################################################################################################################
 # Set Up
 ## Install bandit
