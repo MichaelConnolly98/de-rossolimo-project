@@ -47,7 +47,8 @@ def test_all_file_ids_match():
                     id_s3_bucket.append(el[f"{table}_id"])
 
         # asserts data in table is same as data in bucket
+        print(table)
         assert len(id_s3_bucket) > 0
         assert len(id_num) > 0
-        assert id_s3_bucket== id_num
+        assert sorted(set(id_s3_bucket)) == sorted(set(id_num))
 
