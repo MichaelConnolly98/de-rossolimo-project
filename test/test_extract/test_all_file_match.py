@@ -50,5 +50,13 @@ def test_all_file_ids_match():
         print(table)
         assert len(id_s3_bucket) > 0
         assert len(id_num) > 0
-        assert sorted(set(id_s3_bucket)) == sorted(set(id_num))
+
+        #sort the set of unique id's in ascending order
+        set_id_s3 = sorted(set(id_s3_bucket))
+        set_id_num = sorted(set(id_num))
+        #take all but last 100 values (as new data may not be in s3)
+        set_id_s3_not_end = set_id_s3[:len(set_id_s3) - 100]
+        set_id_num_not_end = set_id_num[:len(set_id_s3) - 100]
+        
+        assert set_id_s3_not_end == set_id_num_not_end
 
