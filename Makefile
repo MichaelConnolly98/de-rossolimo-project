@@ -39,6 +39,15 @@ requirements: create-environment
 	$(call execute_in_env, $(PIP) install -r ./requirements.txt)
 
 ################################################################################################################
+# create lambda layer
+lambda-layer:
+	$(call execute_in_env, $(PIP) install -r ./requirements.txt -t ./layer/python)
+
+# create zip lambda layer
+zip-lambda-layer:
+	$(call execute_in_env, zip -r $(.layer/python).zip)
+
+################################################################################################################
 # Set Up
 ## Install bandit
 bandit:
