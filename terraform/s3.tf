@@ -51,7 +51,7 @@ resource "aws_s3_object" "lambda_extract" {
 resource "aws_s3_object" "layer_code" {
   bucket = aws_s3_bucket.code_bucket.bucket
   key = "lambda/layer.zip"
-  etag = filemd5("${path.module}/../layer.zip")
+  #etag = filemd5("${path.module}/../layer.zip")
   source = "${path.module}/../layer.zip"
 }
 
