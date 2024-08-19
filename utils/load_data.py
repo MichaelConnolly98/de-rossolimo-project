@@ -71,7 +71,7 @@ def load(data):
 
     except TypeError as t:
         logger.error({"Result": "Failure", "Error": f"TypeError occurred: {str(t)}"})
-        raise t
+        raise TypeError('A TypeError has occured')
 
     except ClientError as c:
         logger.error(
