@@ -8,6 +8,8 @@ from botocore.exceptions import ClientError
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+class BodyNotUploadedError:
+    pass
 
 def load(data):
     """
@@ -23,21 +25,23 @@ def load(data):
     Returns:
     None
     """
-    s3 = boto3.client("s3")
-    BUCKETNAME = os.environ["S3_BUCKET_NAME"]
-    date = datetime.now()
-    folder_name = datetime.now().strftime("%Y-%m-%d")
-    folder_name_2 = datetime.now().strftime("%H:%M:%S")
-    counter = 0
-
-    for table in data["all_data"]:
-        if not data["all_data"][table]:
-            counter += 1
-
-    if counter == len(data["all_data"]):
-        logger.warning("All tables uploaded as empty files")
 
     try:
+        s3 = boto3.client("s3")
+        BUCKETNAME = os.environ["S3_BUCKET_NAME"]
+        date = datetime.now()
+        folder_name = datetime.now().strftime("%Y-%m-%d")
+        folder_name_2 = datetime.now().strftime("%H:%M:%S")
+        counter = 0
+
+        for table in data["all_data"]:
+            if not data["all_data"][table]:
+                counter += 1
+
+        if counter == len(data["all_data"]):
+            logger.warning("All tables will be uploaded as empty files")
+
+
         for key, value in data["all_data"].items():
             s3.put_object(
                 Bucket=(BUCKETNAME),
@@ -55,22 +59,27 @@ def load(data):
             response_body = response["Body"].read().decode("utf-8")
             if response_body is None:
                 logger.error(
-                    f"error occurred:"
-                    f" body not uploaded at {folder_name} {folder_name_2}"
+                    {"Result": "Failure",\
+                    "Error": f" body not uploaded at {folder_name} {folder_name_2}"}
                 )
-                return f"error at {folder_name} {folder_name_2}"
+    
+                raise BodyNotUploadedError(
+                    f"error at {folder_name} {folder_name_2}")
 
-        logger.info(f"success at {folder_name} {folder_name_2}")
-        return {"result": "success"}
+        logger.info({"Result": "Success", "Message": f"data uploaded at {folder_name} {folder_name_2}"})
+        return {"Result": "Success", "Message": "data uploaded"}
 
     except TypeError as t:
-        logger.error(f"error occurred: {repr(t)}")
-        return t
+        logger.error({"Result": "Failure", "Error": f"TypeError occurred: {str(t)}"})
+        raise t
 
     except ClientError as c:
-        logger.error(f"error occurred: {c.response}")
-        return c
+        logger.error(
+            {"Result": "Failure", "Error": f"error occurred: {c.response}"}
+            )
+        raise c
 
     except Exception as e:
-        logger.error(f"error occurred while trying to upload to s3 bucket: {repr(e)}")
-        return e
+        logger.error({"Result": "Failure",\
+                    "Error": f"Exception occurred on upload to s3 bucket: {str(e)}"})
+        raise e

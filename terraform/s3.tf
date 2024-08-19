@@ -38,7 +38,7 @@ resource "aws_s3_bucket" "code_bucket" {
   }
 }
 
-#upload extractlambda archive file to lambda code bucket
+#upload extract lambda archive file to lambda code bucket
 resource "aws_s3_object" "lambda_extract" {
   bucket = aws_s3_bucket.code_bucket.bucket
   key = "lambda/extract.zip"
@@ -51,15 +51,23 @@ resource "aws_s3_object" "lambda_extract" {
 resource "aws_s3_object" "layer_code" {
   bucket = aws_s3_bucket.code_bucket.bucket
   key = "lambda/layer.zip"
-  # etag = filemd5("${path.module}/../layer.zip")
+  etag = filemd5("${path.module}/../layer.zip")
   source = "${path.module}/../layer.zip"
+}
+
+#upload util lambda layer code to lambda code bucket
+resource "aws_s3_object" "util_layer_code" {
+  bucket = aws_s3_bucket.code_bucket.bucket
+  key = "lambda/utils.zip"
+  etag = filemd5("${path.module}/../lambda_packages/utils.zip")
+  source = "${path.module}/../lambda_packages/utils.zip"
 }
 
 ##########################
 #bucket for processed data
 ##########################
 resource "aws_s3_bucket" "processed_data_bucket" {
-  bucket_prefix = "${var.code_bucket_prefix}-"
+  bucket_prefix = "${var.process_bucket_prefix}-"
   tags = {
     BucketType = "ProcessedData"
     BucketFunction = "HoldsProcessedData"

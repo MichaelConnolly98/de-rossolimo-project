@@ -2,8 +2,10 @@ import pytest
 import boto3
 from moto import mock_aws
 import os
-from src.extract.log_time import get_timestamp_from_logs
+from utils.log_time import get_timestamp_from_logs, InvalidInput
 import logging
+from botocore.exceptions import ClientError
+from unittest.mock import patch
 
 
 # put fake logs in, see if it returns the most recent one
@@ -98,20 +100,23 @@ def test_get_timestamp_returns_from_latest_log_stream(mock_logs_with_stream_and_
     assert result == "2024-08-13 12:53:19"
 
 
-def test_get_timestamp_raises_client_error_when_resource_not_exists(mock_logs_client):
-
-    result = get_timestamp_from_logs()
-    assert result["Error"]["Error"]["Code"] == "ResourceNotFoundException"
-    assert result["Result"] == "Failure"
-
-
-def test_get_timestamp_logs_errors(mock_logs_client, caplog):
-    with caplog.at_level(logging.ERROR):
+def test_get_timestamp_raises_client_error_when_resource_not_exists(
+    mock_logs_client, caplog
+):
+    with pytest.raises(ClientError):
         get_timestamp_from_logs()
         assert "ResourceNotFoundException" in caplog.text
 
 
-def test_get_timestamp_catches_exceptions(mock_logs_client, caplog):
+def test_get_timestamp_catches_invalid_input_exception(mock_logs_client, caplog):
     with caplog.at_level(logging.ERROR):
-        get_timestamp_from_logs(log_group_name=None)
-        assert "log_group_name parameter" in caplog.text
+        with pytest.raises(InvalidInput):
+            get_timestamp_from_logs(log_group_name=None)
+    assert "log_group_name parameter" in caplog.text
+
+
+@patch("utils.log_time.boto3.client", side_effect=Exception)
+def test_get_timestamp_catches_other_errors(patch_client, caplog):
+    with pytest.raises(Exception):
+        get_timestamp_from_logs()
+    assert "'Result': 'Failure'" in caplog.text

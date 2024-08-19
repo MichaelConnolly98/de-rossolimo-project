@@ -78,5 +78,8 @@ unit-test:
 check-coverage:
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest --cov=src test/)
 
+check-coverage-util:
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest --cov=utils test/)
+
 ## Run all checks
-run-checks: security-test run-black unit-test check-coverage
+run-checks: security-test run-black unit-test check-coverage check-coverage-util

@@ -1,4 +1,4 @@
-from src.extract.extract_data import extract_func
+from utils.extract_data import extract_func
 from datetime import datetime
 import pytest
 from pg8000.native import DatabaseError
@@ -42,7 +42,7 @@ def test_database_error_raised_when_invalid_argument_given_to_extract_function(
             assert "A database error has occured" in caplog.text
 
 
-@patch("src.extract.extract_data.get_connection", side_effect=Exception)
+@patch("utils.extract_data.get_connection", side_effect=Exception)
 def test_error_is_raised_when_exception_occurs(caplog):
     with caplog.at_level(logging.ERROR):
         with pytest.raises(Exception) as e:

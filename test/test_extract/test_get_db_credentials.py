@@ -1,4 +1,4 @@
-from src.extract.extract_data import get_db_credentials
+from utils.extract_data import get_db_credentials
 from botocore.exceptions import ClientError
 
 import pytest
@@ -59,13 +59,13 @@ def test_error_handling_secret_name_not_found(mock_sm_client, caplog):
     with caplog.at_level(logging.ERROR):
         with pytest.raises(ClientError) as e:
             get_db_credentials("does_not_exist", sm_client=mock_sm_client)
-            assert (
-                str(e.value) == "An error occurred (ResourceNotFoundException) "
-                "when calling the GetSecretValue operation: "
-                "Secrets Manager can't find the specified secret."
-            )
-            assert (
-                "An error occurred (ResourceNotFoundException) when "
-                "calling the GetSecretValue operation: Secrets Manager"
-                "can't find the specified secret." in caplog.text
-            )
+        assert (
+            "An error occurred (ResourceNotFoundException) "
+            "when calling the GetSecretValue operation: "
+            "Secrets Manager can't find the specified secret." in str(e)
+        )
+        assert (
+            "An error occurred (ResourceNotFoundException) when "
+            "calling the GetSecretValue operation: Secrets Manager "
+            "can't find the specified secret." in caplog.text
+        )
