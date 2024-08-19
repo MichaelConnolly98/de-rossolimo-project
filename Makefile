@@ -41,7 +41,7 @@ requirements: create-environment
 ################################################################################################################
 # create lambda layer
 lambda-layer:
-	$(call execute_in_env, $(PIP) install -r ./requirements.txt -t ./layer/python)
+	$(call execute_in_env, $(PIP) install -r ./requirements.txt -t $(./layer/python))
 
 # create zip lambda layer
 zip-lambda-layer:
