@@ -6,6 +6,7 @@ import json
 from pprint import pprint
 import pandas as pd
 import iso4217parse
+from botocore.exceptions import ClientError
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -28,11 +29,10 @@ def get_table_names(connection=get_connection):
         FROM INFORMATION_SCHEMA.TABLES
         WHERE TABLE_SCHEMA = 'public'""")
         result_no_prisma =  [x[0] for x in result if x[0] != '_prisma_migrations']
-        print("made_it_here <<<<<<<<<<<<<<<<<<")
+        
         return result_no_prisma
         
     except DatabaseError as e:
-        print("made_it_here")
         logging.error(
             {"Result": "Failure", "Error": f"A database error has occured: {str(e)}"}
         )
@@ -60,10 +60,26 @@ def get_keys_from_s3(s3_table_name_prefix, bucket_name="de-rossolimo-ingestion-2
     Returns:
     List of keys for a particular file prefix
     """
-    s3_client = boto3.client("s3")
-    response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=f"table={s3_table_name_prefix}/")
-    key_list = [el["Key"] for el in response["Contents"]]
-    return key_list
+    try:
+        s3_client = boto3.client("s3")
+        response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=f"table={s3_table_name_prefix}/")
+
+        key_list = [el["Key"] for el in response["Contents"]]
+        return key_list
+    
+    except ClientError as e:
+        logging.error(
+            {"Result": "Failure", "Error": f"A Client Error error has occured: {str(e)}"}
+        )
+        raise e
+    except KeyError as k:
+        if "Contents" in str(k):
+            logging.error({"Result": "Failure", "Error": f"No contents in Prefix or Bucket, {str(k)}"})
+        raise k
+
+    except Exception as exception:
+        logging.error({"Result": "Failure", "Error": f"An exception has occured: {str(exception)}"})
+        raise Exception("An error has occured")
 
 #change bucket name to dynamic
 def get_s3_file_content_from_keys(key_list: list, bucket_name="de-rossolimo-ingestion-20240812125359611100000001"):
