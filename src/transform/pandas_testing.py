@@ -194,8 +194,7 @@ def dataframe_creator(table_name=None):
     except Exception as exception:
         logging.error({
             "Result": "Failure",
-            f"Error": "An exception has occured: {str(exception)}"
-            }
+            f"Error": "An exception has occured: {str(exception)"}
     )
         raise exception
             
