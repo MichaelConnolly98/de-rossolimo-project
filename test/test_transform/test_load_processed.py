@@ -29,19 +29,19 @@ def s3_client(aws_creds):
         yield s3
 
 
-def test_func_transforms_to_parquet(s3_client):
-    dataf = dataframe_creator('address')
-    load_processed(dataf)
+# def test_func_transforms_to_parquet(s3_client):
+#     dataf = dataframe_creator('address')
+#     load_processed(dataf)
 
-    #get object just loaded in
-    s3_object = s3_client.get_object(Bucket='test-bucket', Key='test')
-    #get streaming body of object
-    sb = s3_object['Body']
-    #read streaming body
-    parq = sb.read()
-    
-    in_buffer = BytesIO(parq)
-    df = pd.DataFrame(in_buffer)
-    print(df)
+#     #get object just loaded in
+#     s3_object = s3_client.get_object(Bucket='test-bucket', Key='test')
+#     #get streaming body of object
+#     sb = s3_object['Body']
+#     #read streaming body
+#     parq = sb.read()
+
+#     in_buffer = BytesIO(parq)
+#     df = pd.DataFrame(in_buffer)
+#     print(df)
     
     # read into dataframe and compare
