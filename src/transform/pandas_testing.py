@@ -122,33 +122,35 @@ def file_data():
     Python dict of form 
     {table_name: [{dict for each row},{}], table_name2: [{},{},{}], etc...}
     """
+    try:
+        table_names = get_table_names()
 
-    table_names = get_table_names()
+        #{'address': [], 'staff': [], etc...}
+        file_contents_dict = {table_name: [] for table_name in table_names}
 
-    #{'address': [], 'staff': [], etc...}
-    file_contents_dict = {table_name: [] for table_name in table_names}
+        for table in table_names:
+            key_list = get_keys_from_s3(table)
+            file_contents = get_s3_file_content_from_keys(key_list)
 
+            #take first item of list, which has keys already in
+            list_to_add_to = file_contents[0]
+            if len(file_contents) == 1:
+                file_contents_dict[table] = list_to_add_to[table]
+            else:
+                #appends other dictionaries in other elements to first list element
+                for el in file_contents[1:]:
+                    for ele in el[table]:
+                    #list to add format_to final form: {address: [{},{},{}]}
+                        list_to_add_to[table].append(ele)
+                        file_contents_dict[table] = list_to_add_to[table]
 
-    for table in table_names:
-        key_list = get_keys_from_s3(table)
-        file_contents = get_s3_file_content_from_keys(key_list)
-
-        #take first item of list, which has keys already in
-        list_to_add_to = file_contents[0]
-        if len(file_contents) == 1:
-            file_contents_dict[table] = list_to_add_to[table]
-        else:
-            #appends other dictionaries in other elements to first list element
-            for el in file_contents[1:]:
-                for ele in el[table]:
-                #list to add format_to final form: {address: [{},{},{}]}
-                    list_to_add_to[table].append(ele)
-                    file_contents_dict[table] = list_to_add_to[table]
-
-    #dont need to save it to a file, just means I don't have to run it everytime
-    with open("./pandas_test_data.json", "w", encoding="utf-8") as f:
-        json.dump(file_contents_dict, f)
-    return file_contents_dict
+        #dont need to save it to a file, just means I don't have to run it everytime
+        with open("./pandas_test_data.json", "w", encoding="utf-8") as f:
+            json.dump(file_contents_dict, f)
+        return file_contents_dict
+    except Exception as exception:
+        logging.error({"Result": "Failure", "Error": f"An exception has occured: {str(exception)}"})
+        raise Exception("An error has occured")
 
 def dataframe_creator(table_name=None):
     """
