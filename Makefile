@@ -46,7 +46,7 @@ lambda-layer:
 
 # create zip lambda layer
 zip-lambda-layer:
-	$(call execute_in_env, zip -r ./layer.zip)
+	$(call execute_in_env, zip -r ./layer.zip ./layer)
 
 # create layer and zip layer
 create-lambda: lambda-layer zip-lambda-layer
