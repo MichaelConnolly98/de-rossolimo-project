@@ -24,6 +24,7 @@ def payment_dim():
     payment_df = payment_df.iloc[:,0:2]
     return payment_df
 
+#small change
 def counterparty_dim():
     part_counterparty_df = dataframe_creator(table_name="counterparty")
     address_df = dataframe_creator(table_name="address")
