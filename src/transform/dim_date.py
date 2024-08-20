@@ -24,5 +24,3 @@ def create_date_table(
     df["quarter"] = df.Date.dt.quarter
     df = df.drop("Date", axis=1)
     return df
-
-print(create_date_table().head(100))
