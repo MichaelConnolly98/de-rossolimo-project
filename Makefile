@@ -12,6 +12,7 @@ PYTHONPATH=${WD}
 SHELL := /bin/bash
 PROFILE = default
 PIP:=pip
+LAYER := ${./layer/python}
 
 ## Create python interpreter environment.
 create-environment:
@@ -41,11 +42,11 @@ requirements: create-environment
 ################################################################################################################
 # create lambda layer
 lambda-layer:
-	$(call execute_in_env, $(PIP) install -r ./requirements.txt -t $(./layer/python))
+	$(call execute_in_env, $(PIP) install -r ./requirements.txt -t $(LAYER))
 
 # create zip lambda layer
 zip-lambda-layer:
-	$(call execute_in_env, zip -r $(.layer/python).zip)
+	$(call execute_in_env, zip -r $(LAYER).zip)
 
 # create layer and zip layer
 create-lambda: lambda-layer zip-lambda-layer
