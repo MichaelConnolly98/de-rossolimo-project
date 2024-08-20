@@ -12,6 +12,7 @@ jmespath==1.0.1
 MarkupSafe==2.1.5
 moto==5.0.12
 packaging==24.1
+pandaa==2.2.2
 pg8000==1.31.2
 pluggy==1.5.0
 pycparser==2.22
