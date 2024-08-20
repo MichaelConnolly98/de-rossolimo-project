@@ -197,7 +197,7 @@ def dataframe_creator(table_name=None):
             f"Error": "An exception has occured: {str(exception)}"
             }
     )
-        raise e
+        raise exception
             
 
 
