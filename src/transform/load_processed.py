@@ -17,7 +17,7 @@ def load_processed(df):
     df.to_parquet(out_buffer)
     #upload to s3 bucketname is placeholder for now
     s3.put_object(
-        Bucket = 'BUCKETNAME',
+        Bucket = 'test-bucket',
         Key = 'test',
         Body = out_buffer.getvalue()
     )
