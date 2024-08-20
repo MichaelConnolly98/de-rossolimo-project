@@ -6,6 +6,7 @@ import os
 import logging
 from unittest.mock import patch
 from datetime import datetime
+from botocore.exceptions import ClientError
 
 logger = logging.getLogger("test")
 logger.setLevel(logging.INFO)
@@ -114,3 +115,19 @@ def test_func_can_handle_non_serializable_objects(s3_client, caplog):
         fake_data = {"all_data": {"table1": [{"nso": datetime(2002, 8, 14)}]}}
         result = load(fake_data)
     assert result == {"Result": "Success", "Message": "data uploaded"}
+
+def test_error_is_raised_when_TypeError_occurs(s3_client, caplog):
+    with caplog.at_level(logging.ERROR):
+        with pytest.raises(TypeError) as e:
+            load({5})
+        assert str(e.value) == "A TypeError has occured"
+        assert "TypeError occurred" in caplog.text
+
+@patch("utils.load_data.datetime", side_effect=ClientError)
+def test_error_client_error_except(datetime_patch, s3_client, caplog):
+    datetime_patch.now.return_value.strftime.side_effect = ClientError(error_response={"Error": {"Code": "DecryptionFailureException"}}, operation_name='Test')
+    with caplog.at_level(logging.ERROR):
+        with pytest.raises(ClientError) as e:
+            fake_data = {"all_data": {"table1": [{"nso": datetime(2002, 8, 14)}]}}
+            load(fake_data)
+        assert "error occurred" in caplog.text

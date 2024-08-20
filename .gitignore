@@ -7,5 +7,4 @@
 */locals.tf
 cloudwatch.py
 /.coverage
-
 /transform.zip
