@@ -3,8 +3,8 @@ import pytest
 
 def test_valid_currency_code_returns_name():
     name = currency_code_to_name('USD')
-    assert name == 'US Dollar'
+    assert name == 'United States dollar'
 
-def test_invalid_currency_code_returns_KeyError()):
+def test_invalid_currency_code_returns_KeyError():
     with pytest.raises(KeyError):
         name = currency_code_to_name('does_not_exist')
