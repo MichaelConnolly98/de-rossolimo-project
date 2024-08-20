@@ -91,18 +91,27 @@ def get_s3_file_content_from_keys(key_list: list, bucket_name="de-rossolimo-inge
 
     Returns:
     List of Python dictionary of data contained in each key path
+    If key_list is empty list, returns empty list
     """
-    s3_client = boto3.client("s3")
-    data = []
-    for k in key_list:
-        f = s3_client.get_object(Bucket=bucket_name, Key=k)
-        a = f["Body"].read().decode("utf-8")
-        dict_content = json.loads(a)
-        for k, v in dict_content.items():
-            if v != []:
-                data.append(dict_content)
-        # if dict_content.values() != []:
-        #     data.append(dict_content)
+    try:
+        s3_client = boto3.client("s3")
+        data = []
+        for k in key_list:
+            f = s3_client.get_object(Bucket=bucket_name, Key=k)
+            a = f["Body"].read().decode("utf-8")
+            dict_content = json.loads(a)
+            for k, v in dict_content.items():
+                if v != []:
+                    data.append(dict_content)
+
+    except ClientError as e:
+        logging.error(
+            {"Result": "Failure", "Error": f"A Client Error error has occured: {str(e)}"}
+        )
+        raise e
+    except Exception as exception:
+        logging.error({"Result": "Failure", "Error": f"An exception has occured: {str(exception)}"})
+        raise Exception("An error has occured")
     return data
 
 def file_data():
@@ -173,15 +182,7 @@ def dataframe_creator(table_name=None):
             df.sort_index(inplace=True)
             return df
             
-#just dim tables
-# def dim_tables():
-#     dataframe_list = dataframe_creator()
-#     print(get_table_names())
-#     for el in dataframe_list:
-#         if el.name in ["address", "staff", "department", "counterparty", "design", "transaction", "design", "currency", "payment_type"]:
-#             pass
-#         else:
-#             print("Not in list", el.name)
+
 
 
 
