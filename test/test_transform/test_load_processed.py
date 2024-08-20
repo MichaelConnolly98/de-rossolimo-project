@@ -31,3 +31,4 @@ def test_func_transforms_to_parquet(s3_client):
     dataf = dataframe_creator('address')
     result = load_processed(dataf)
     
+    # read into dataframe and compare
