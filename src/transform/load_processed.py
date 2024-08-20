@@ -12,7 +12,7 @@ def load_processed(df):
     #aws client that connects to s3
     s3 = boto3.client('s3')
     #temperary place to store bytes of parquet
-    out_buffer = BytesIO()
+    out_buffer = BytesIO()  
     # put parquet into temp store
     df.to_parquet(out_buffer)
     #upload to s3 bucketname is placeholder for now
