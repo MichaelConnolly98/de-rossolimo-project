@@ -1,4 +1,4 @@
-from pandas_date_table_practice import create_date_table
+from src.transform.pandas_date_table_practice import create_date_table
 import pandas as pd
 
 def test_create_date_table_returns_dataframe():
