@@ -1,6 +1,5 @@
 from src.transform.load_processed import load_processed
 from src.transform.pandas_testing import dataframe_creator
-import json
 import pandas as pd
 from moto import mock_aws
 import boto3
@@ -28,7 +27,7 @@ def s3_client(aws_creds):
         yield s3
 
 
-def test_func_transforms_to_parquet():
+def test_func_transforms_to_parquet(s3_client):
     dataf = dataframe_creator('address')
     result = load_processed(dataf)
     
