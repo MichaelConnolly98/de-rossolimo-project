@@ -12,13 +12,6 @@ def test_staff_dim_has_required_columns():
     "first_name", "last_name", "department_name", "location", "email_address"
         ]:
         assert el in result.columns
-
-# def test_staff_dim_has_expected_value_for_rows():
-#     result = staff_dim()
-#     for el in [
-#     "first_name", "last_name", "department_name", "location", "email_address"
-#         ]:
-#         pass
                 
 def test_data_types_are_expected():
     result = staff_dim()
