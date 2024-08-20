@@ -1,4 +1,3 @@
-import pandas as pd
 from src.transform.currency_code_to_name import currency_code_to_name
 
 def currency_dim(currency_df):
