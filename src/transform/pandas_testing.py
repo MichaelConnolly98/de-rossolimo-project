@@ -11,20 +11,28 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 #should i put the get_connection in the parameters instead? 
-def get_table_names():
+def get_table_names(connection=get_connection):
     """
-    Returns list of table names in totesys database
+    Returns list of table names in database
+
+    Parameters:
+    pg8000 connection function which returns a Connection object
+
+    Returns:
+    List of table names for given database
     """
     conn = None
     try:
-        conn = get_connection()
+        conn = connection()
         result = conn.run("""SELECT TABLE_NAME
         FROM INFORMATION_SCHEMA.TABLES
         WHERE TABLE_SCHEMA = 'public'""")
         result_no_prisma =  [x[0] for x in result if x[0] != '_prisma_migrations']
+        print("made_it_here <<<<<<<<<<<<<<<<<<")
         return result_no_prisma
-    
+        
     except DatabaseError as e:
+        print("made_it_here")
         logging.error(
             {"Result": "Failure", "Error": f"A database error has occured: {str(e)}"}
         )
@@ -36,7 +44,7 @@ def get_table_names():
                 "Error": f"A database connection exception has occured: {str(err)}",
             }
         )
-        raise Exception("A database connection exception has occured")
+        raise Exception("An exception has occured")
     finally:
         conn.close()
 

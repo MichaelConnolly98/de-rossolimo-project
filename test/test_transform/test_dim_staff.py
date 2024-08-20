@@ -13,12 +13,16 @@ def test_staff_dim_has_required_columns():
         ]:
         assert el in result.columns
                 
-def test_data_types_are_expected():
+def test_staff_dim_data_types_are_expected():
     result = staff_dim()
     assert result["first_name"].dtype == "object"
     assert result["last_name"].dtype == "object"
     assert result["department_name"].dtype == "object"
     assert result["location"].dtype == "object"
     assert result["email_address"].dtype == "object"
+
+def test_staff_dim_index_is_expected():
+    result = staff_dim()
+    assert result.index.name == "staff_id"
 
         
