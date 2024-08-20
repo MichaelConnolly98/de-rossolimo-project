@@ -1,4 +1,4 @@
-from src.transform.currency_dim import currency_dim
+from src.transform.dim_currency import currency_dim
 from src.transform.read_ingestion import read_ingestion
 import pytest
 import pandas as pd
