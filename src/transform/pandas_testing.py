@@ -165,24 +165,39 @@ def dataframe_creator(table_name=None):
     OR
     a single dataframe object
     """
-    with open ("./pandas_test_data.json", "r") as f:
-        file_dict = json.load(f)
-        dataframe_list = []
-        if not table_name:
-            tables = get_table_names()
-            for table in tables:
-                df = pd.json_normalize(file_dict[table])
-                #name the list so you can call the individual dataframes
-                df.name = table
-                dataframe_list.append(df)
-            return dataframe_list
+
+    #currently opening from test_data - fine for first big dump, 
+    #need to sort out how this will pull from buckets in future
+    #file_data returns dicts always even if no data
+    #so it may be OK to make into a dataframe anyway
+    try:
+        with open ("./pandas_test_data.json", "r") as f:
+            file_dict = json.load(f)
+            dataframe_list = []
+            if not table_name:
+                tables = get_table_names()
+                for table in tables:
+                    df = pd.json_normalize(file_dict[table])
+                    df.name = table
+                    df.set_index(f"{table}_id", inplace=True, drop=True)
+                    df.sort_index(inplace=True)
+                    dataframe_list.append(df)
+                return dataframe_list
+                
+            else:
+                df = pd.json_normalize(file_dict[table_name])
+                df.name = table_name
+                df.set_index(f"{table_name}_id", inplace=True, drop=True)
+                df.sort_index(inplace=True)
+                return df
             
-        else:
-            df = pd.json_normalize(file_dict[table_name])
-            df.name = table_name
-            df.set_index(f"{table_name}_id", inplace=True, drop=True)
-            df.sort_index(inplace=True)
-            return df
+    except Exception as exception:
+        logging.error({
+            "Result": "Failure",
+            f"Error": "An exception has occured: {str(exception)}"
+            }
+    )
+        raise e
             
 
 
