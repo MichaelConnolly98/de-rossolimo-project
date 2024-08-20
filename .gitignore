@@ -6,6 +6,6 @@
 */*.tfvars
 */locals.tf
 cloudwatch.py
-*coverage*
+/.coverage
 
 /transform.zip
