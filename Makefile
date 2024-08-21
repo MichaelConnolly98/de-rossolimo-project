@@ -39,17 +39,6 @@ endef
 requirements: create-environment
 	$(call execute_in_env, $(PIP) install -r ./requirements.txt)
 
-################################################################################################################
-# create lambda layer
-lambda-layer:
-	$(call execute_in_env, $(PIP) install -r ./requirements.txt -t ./layer/python)
-
-# create zip lambda layer
-zip-lambda-layer:
-	$(call execute_in_env, zip -r ./layer.zip ./layer)
-
-# create layer and zip layer
-create-lambda: lambda-layer zip-lambda-layer
 
 ################################################################################################################
 # Set Up
