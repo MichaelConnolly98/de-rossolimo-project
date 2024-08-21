@@ -86,3 +86,46 @@ def purchase_order_facts():
 
 
     return purchase_order
+
+def payment_facts():
+    payment = dataframe_creator('payment')
+
+    payment.drop(["company_ac_number", "counterparty_ac_number"], axis=1, inplace=True)
+
+    payment["created_date"] = pd.to_datetime(pd.to_datetime(payment["created_at"], format="mixed").dt.date)
+    payment["created_time"] = pd.to_datetime(payment["created_at"], format="mixed").dt.time
+    payment.drop(["created_at"], axis=1, inplace=True)
+
+    payment["last_updated_date"] = pd.to_datetime(pd.to_datetime(payment["last_updated"], format="mixed").dt.date)
+    payment["last_updated_time"] = pd.to_datetime(payment["last_updated"], format="mixed").dt.time
+    payment.drop(["last_updated"], axis=1, inplace=True)
+
+    payment["payment_date"] = pd.to_datetime(payment["payment_date"])
+
+    payment["payment"] = payment["payment_date"].astype(bool)
+
+    payment['payment_amount'] = pd.to_numeric(payment['payment_amount'])
+
+    payment["payment_id"] = payment.index
+    payment.index.name = "payment_record_id"
+
+    desired_order = [
+        "payment_id", 
+        "created_date", 
+        "created_time", 
+        "last_updated_date", 
+        "last_updated_time", 
+        "transaction_id", 
+        "counterparty_id", 
+        "payment_amount",
+        "currency_id",
+        "payment_type_id",
+        "paid", 
+        "payment_date"
+    ]
+
+    payment = payment[desired_order]
+    payment.name = "fact_payment"
+
+
+    return payment
