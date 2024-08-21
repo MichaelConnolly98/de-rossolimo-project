@@ -5,7 +5,6 @@ import logging
 import json
 from pprint import pprint
 import pandas as pd
-import iso4217parse
 from botocore.exceptions import ClientError
 
 logger = logging.getLogger(__name__)
@@ -198,9 +197,6 @@ def dataframe_creator(table_name=None):
     )
         raise exception
             
-
-
-
 
 
     

@@ -2,7 +2,6 @@ from src.transform.pandas_testing import get_table_names
 from unittest.mock import Mock, patch
 import pytest
 from pg8000.exceptions import DatabaseError
-import logging
 
 def test_get_table_names_returns_list_of_table_names():
     result = get_table_names()

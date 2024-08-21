@@ -1,7 +1,7 @@
 import boto3
 import pandas as pd
 
-def read_ingestion():
+def read_ingestion_function():
     s3 = boto3.client("s3")
     BUCKETNAME = 'testing-problem-bucket-de-rossolimo'
     tables = s3.list_objects(Bucket=BUCKETNAME, Prefix='table', Delimiter='/')['CommonPrefixes']
