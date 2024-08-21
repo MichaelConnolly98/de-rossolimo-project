@@ -20,8 +20,6 @@ jobs:
         python-version: '3.12'
     - name: Run Requirements
       run: make requirements
-    - name: Run create-lambda-layer
-      run: make create-lambda
     - name: Run dev-setup
       run: make dev-setup
     - name: Run Tests
@@ -38,12 +36,6 @@ jobs:
     steps:
     - name: Checkout Repo
       uses: actions/checkout@v4
-    - name: Set-Up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-    - name: Run create-lambda-layer
-      run: make create-lambda
     - name: Install Terraform
       uses: hashicorp/setup-terraform@v3
     - name: Configure AWS Credentials

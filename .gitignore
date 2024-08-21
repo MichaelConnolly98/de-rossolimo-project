@@ -1,8 +1,6 @@
 /venv*
 **/.terraform*
 **__pycache__**
-/layer.zip
-/layer*
 */*.tfvars
 */locals.tf
 cloudwatch.py
