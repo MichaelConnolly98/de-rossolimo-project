@@ -8,7 +8,9 @@ import os
 from io import BytesIO
 import pyarrow.parquet as pq
 import logging
-
+from unittest.mock import patch
+from datetime import datetime
+import pytest
 
 logger = logging.getLogger("test")
 logger.setLevel(logging.INFO)
@@ -35,12 +37,14 @@ def s3_client(aws_creds):
         yield s3
 
 
-def test_func_transforms_to_parquet(s3_client):
+@patch('src.transform.load_processed.datetime')
+def test_func_transforms_to_parquet(datetime_patch, s3_client):
+    datetime_patch.now.return_value = datetime(2002, 11, 9, 16, 38, 23)
     dataf = dataframe_creator('address')
     load_processed(dataf)
     
     #get object just loaded in
-    s3_object = s3_client.get_object(Bucket='test-bucket', Key='test')
+    s3_object = s3_client.get_object(Bucket='test-bucket', Key='table=address/year=2002/month=11/day=9/16:38:23.parquet')
     #read bytes
     buffer = BytesIO(s3_object['Body'].read())
     #convert to table
@@ -67,3 +71,12 @@ def test_raises_exception_when_not_passed_df(s3_client, caplog):
         with pytest.raises(AttributeError):
             load_processed(fake_data)
             assert {'Result': "Failure", 'Error': "AttributeError occurred:"} in caplog.text
+
+@patch('src.transform.load_processed.datetime')
+def test_is_saved_into_s3_in_correct_file_structure(datetime_patch, s3_client):
+    datetime_patch.now.return_value = datetime(2002, 11, 9, 16, 38, 23)
+    dataf = dataframe_creator('address')
+    load_processed(dataf)
+
+    s3_object_list = s3_client.list_objects_v2(Bucket='test-bucket')
+    assert s3_object_list['Contents'][0]['Key'] == 'table=address/year=2002/month=11/day=9/16:38:23.parquet'
