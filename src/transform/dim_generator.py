@@ -30,14 +30,16 @@ def create_date_table(
 print(create_date_table())
 
 
-def currency_dim(currency_df):
+def currency_dim():
+    currency_df = dataframe_creator(table_name='currency')
     currency_df = currency_df.drop(['created_at', 'last_updated'], axis=1)
     currency_df["currency_name"] = currency_df["currency_code"].apply(currency_code_to_name)
     return currency_df
 
-def payment_type_dim(currency_df):
-    currency_df = currency_df.drop(['created_at', 'last_updated'], axis=1)
-    return currency_df
+def payment_type_dim():
+    payment_type_df = dataframe_creator(table_name='payment_type')
+    payment_type_df = payment_type_df.drop(['created_at', 'last_updated'], axis=1)
+    return payment_type_df
 
 def staff_dim():
     part_staff_df = dataframe_creator(table_name="staff")
