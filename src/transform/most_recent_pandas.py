@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 #should i put the get_connection in the parameters instead? 
-def get_table_names(connection=get_connection):
+def get_table_names_single(connection=get_connection):
     """
     Returns list of table names in database
 
@@ -48,7 +48,8 @@ def get_table_names(connection=get_connection):
         conn.close()
 
 #change bucket name to dynamic
-def get_keys_from_s3(s3_table_name_prefix, bucket_name="de-rossolimo-ingestion-20240812125359611100000001"):
+
+def get_most_recent_key_per_table_from_s3_single(s3_table_name_prefix, bucket_name="de-rossolimo-ingestion-20240812125359611100000001"):
     """
     Gets all key paths for a file prefix in s3 bucket
 
@@ -59,12 +60,13 @@ def get_keys_from_s3(s3_table_name_prefix, bucket_name="de-rossolimo-ingestion-2
     Returns:
     List of keys for a particular file prefix
     """
+    get_last_modified = lambda obj: int(obj['LastModified'].strftime('%s'))
+
     try:
         s3_client = boto3.client("s3")
-        response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=f"table={s3_table_name_prefix}/")
-
-        key_list = [el["Key"] for el in response["Contents"]]
-        return key_list
+        response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=f"table={s3_table_name_prefix}/")["Contents"]
+        last_added = [obj['Key'] for obj in sorted(response, key=get_last_modified)][-1]
+        return last_added
     
     except ClientError as e:
         logging.error(
@@ -75,13 +77,9 @@ def get_keys_from_s3(s3_table_name_prefix, bucket_name="de-rossolimo-ingestion-2
         if "Contents" in str(k):
             logging.error({"Result": "Failure", "Error": f"No contents in Prefix or Bucket, {str(k)}"})
         raise k
-
-    except Exception as exception:
-        logging.error({"Result": "Failure", "Error": f"An exception has occured: {str(exception)}"})
-        raise Exception("An error has occured")
-
+    
 #change bucket name to dynamic
-def get_s3_file_content_from_keys(key_list: list, bucket_name="de-rossolimo-ingestion-20240812125359611100000001"):
+def get_s3_file_content_from_key_single(key: list, bucket_name="de-rossolimo-ingestion-20240812125359611100000001"):
     """
     Gets file contents from s3 key list
 
@@ -96,25 +94,25 @@ def get_s3_file_content_from_keys(key_list: list, bucket_name="de-rossolimo-inge
     try:
         s3_client = boto3.client("s3")
         data = []
-        for k in key_list:
-            f = s3_client.get_object(Bucket=bucket_name, Key=k)
-            a = f["Body"].read().decode("utf-8")
-            dict_content = json.loads(a)
-            for k, v in dict_content.items():
-                if v != []:
-                    data.append(dict_content)
+        
+        f = s3_client.get_object(Bucket=bucket_name, Key=key)
+        a = f["Body"].read().decode("utf-8")
+        dict_content = json.loads(a)
+        for k, v in dict_content.items():
+            if v != []:
+                data.append(dict_content)
 
     except ClientError as e:
         logging.error(
             {"Result": "Failure", "Error": f"A Client Error error has occured: {str(e)}"}
         )
         raise e
-    except Exception as exception:
-        logging.error({"Result": "Failure", "Error": f"An exception has occured: {str(exception)}"})
-        raise Exception("An error has occured")
+    # except Exception as exception:
+    #     logging.error({"Result": "Failure", "Error": f"An exception has occured: {str(exception)}"})
+    #     raise Exception("An error has occured")
     return data
 
-def file_data(path_file="./pandas_test_data.json"):
+def file_data_single():
     """
     Gets file data for every table stored in s3 bucket
 
@@ -122,16 +120,16 @@ def file_data(path_file="./pandas_test_data.json"):
     Python dict of form 
     {table_name: [{dict for each row},{}], table_name2: [{},{},{}], etc...}
     """
-    try:
-        table_names = get_table_names()
+    # try:
+    table_names = get_table_names_single()
 
-        #{'address': [], 'staff': [], etc...}
-        file_contents_dict = {table_name: [] for table_name in table_names}
+    #{'address': [], 'staff': [], etc...}
+    file_contents_dict = {table_name: [] for table_name in table_names}
 
-        for table in table_names:
-            key_list = get_keys_from_s3(table)
-            file_contents = get_s3_file_content_from_keys(key_list)
-
+    for table in table_names:
+        key = get_most_recent_key_per_table_from_s3_single(table)
+        file_contents = get_s3_file_content_from_key_single(key)
+        if file_contents:
             #take first item of list, which has keys already in
             list_to_add_to = file_contents[0]
             if len(file_contents) == 1:
@@ -144,12 +142,12 @@ def file_data(path_file="./pandas_test_data.json"):
                         list_to_add_to[table].append(ele)
                         file_contents_dict[table] = list_to_add_to[table]
 
-        return file_contents_dict
-    except Exception as exception:
-        logging.error({"Result": "Failure", "Error": f"An exception has occured: {str(exception)}"})
-        raise Exception("An error has occured")
+    return file_contents_dict
+    # except Exception as exception:
+    #     logging.error({"Result": "Failure", "Error": f"An exception has occured: {str(exception)}"})
+    #     raise Exception("An error has occured")
 
-def dataframe_creator(table_name, file_dict=None):
+def dataframe_creator_single(table_name, file_dict=None):
     """
     Converts dict to pandas dataframe
 
@@ -163,11 +161,16 @@ def dataframe_creator(table_name, file_dict=None):
     """
 
     try:
+        print(file_dict)
+        if file_dict[table_name]:
+            print(file_dict)
             df = pd.json_normalize(file_dict[table_name])
             df.name = table_name
             df.set_index(f"{table_name}_id", inplace=True, drop=True)
             df.sort_index(inplace=True)
             return df
+        else:
+            return None
             
     except Exception as exception:
         logging.error({
@@ -176,22 +179,9 @@ def dataframe_creator(table_name, file_dict=None):
     )
         raise exception
 
+
+
+
+
+
     
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

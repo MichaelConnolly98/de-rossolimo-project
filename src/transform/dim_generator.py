@@ -1,6 +1,6 @@
 import pandas as pd
 from src.transform.currency_code_to_name import currency_code_to_name
-from src.transform.pandas_testing import dataframe_creator
+from src.transform.most_recent_pandas import dataframe_creator_single
 import json
 
 
@@ -31,52 +31,65 @@ def create_date_table(
 
 
 def currency_dim(file_dict=None):
-    currency_df = dataframe_creator("currency", file_dict)
-    currency_df = currency_df.drop(['created_at', 'last_updated'], axis=1)
-    currency_df["currency_name"] = currency_df["currency_code"].apply(currency_code_to_name)
-    return currency_df
+    currency_df = dataframe_creator_single("currency", file_dict)
+    print(currency_df)
+    if currency_df:
+        currency_df = currency_df.drop(['created_at', 'last_updated'], axis=1)
+        currency_df["currency_name"] = currency_df["currency_code"].apply(currency_code_to_name)
+        return currency_df
+    else:
+        return None
 
 def payment_type_dim(file_dict=None):
-    payment_df = dataframe_creator("payment_type", file_dict)
-    payment_df = payment_df.drop(['created_at', 'last_updated'], axis=1)
-    return payment_df
+    payment_df = dataframe_creator_single("payment_type", file_dict)
+    if payment_df:
+        payment_df = payment_df.drop(['created_at', 'last_updated'], axis=1)
+        return payment_df
+    else:
+        return None
 
 def staff_dim(file_dict=None):
-    part_staff_df = dataframe_creator("staff", file_dict)
-    department_df = dataframe_creator("department", file_dict)
+    part_staff_df = dataframe_creator_single("staff", file_dict)
+    if part_staff_df:
+        department_df = dataframe_creator_single("department", file_dict)
 
-    full_staff_df = part_staff_df.join(
-        department_df, on="department_id", how="left", rsuffix="a"
-        )
-    desired_columns_and_order = [
-        "first_name", "last_name", "department_name", "location", "email_address"
-        ]
-    full_staff_df = full_staff_df[desired_columns_and_order]
-    return full_staff_df
+        full_staff_df = part_staff_df.join(
+            department_df, on="department_id", how="left", rsuffix="a"
+            )
+        desired_columns_and_order = [
+            "first_name", "last_name", "department_name", "location", "email_address"
+            ]
+        full_staff_df = full_staff_df[desired_columns_and_order]
+        return full_staff_df
+    else:
+        return None
 
 def counterparty_dim(file_dict=None):
-    part_counterparty_df = dataframe_creator("counterparty", file_dict)
-    address_df = dataframe_creator("address", file_dict)
-    address_df["legal_address_id"] = address_df.index
-    
+    part_counterparty_df = dataframe_creator_single("counterparty", file_dict)
+    if part_counterparty_df:
+        address_df = dataframe_creator_single("address", file_dict)
+        address_df["legal_address_id"] = address_df.index
+        
 
-    full_counterparty_df = part_counterparty_df.join(
-        address_df, on="legal_address_id", how="left", rsuffix="a")
-    desired_columns_and_order = [
-        "counterparty_legal_name", "address_line_1", "address_line_2", "district", "city", "postal_code", "country", "phone"
-    ]
-    
-    
-    full_counterparty_df = full_counterparty_df[desired_columns_and_order]
-    full_counterparty_df.rename(columns={
-        "address_line_1" : "counterparty_legal_address_line_1",
-        "address_line_2" : "counterparty_legal_address_line_2",
-        "district" : "counterparty_legal_district",
-        "city" : "counterparty_legal_city",
-        "postal_code" : "counterparty_legal_postal_code",
-        "country": "counterparty_legal_country",
-        "phone" : "counterparty_legal_phone_number"
-    }, inplace=True)
-    return full_counterparty_df
+        full_counterparty_df = part_counterparty_df.join(
+            address_df, on="legal_address_id", how="left", rsuffix="a")
+        desired_columns_and_order = [
+            "counterparty_legal_name", "address_line_1", "address_line_2", "district", "city", "postal_code", "country", "phone"
+        ]
+        
+        
+        full_counterparty_df = full_counterparty_df[desired_columns_and_order]
+        full_counterparty_df.rename(columns={
+            "address_line_1" : "counterparty_legal_address_line_1",
+            "address_line_2" : "counterparty_legal_address_line_2",
+            "district" : "counterparty_legal_district",
+            "city" : "counterparty_legal_city",
+            "postal_code" : "counterparty_legal_postal_code",
+            "country": "counterparty_legal_country",
+            "phone" : "counterparty_legal_phone_number"
+        }, inplace=True)
+        return full_counterparty_df
+    else:
+        return None
 
 
