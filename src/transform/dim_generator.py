@@ -32,8 +32,7 @@ def create_date_table(
 
 def currency_dim(file_dict=None):
     currency_df = dataframe_creator_single("currency", file_dict)
-    print(currency_df)
-    if currency_df:
+    if isinstance(currency_df, pd.DataFrame):
         currency_df = currency_df.drop(['created_at', 'last_updated'], axis=1)
         currency_df["currency_name"] = currency_df["currency_code"].apply(currency_code_to_name)
         return currency_df
@@ -42,7 +41,7 @@ def currency_dim(file_dict=None):
 
 def payment_type_dim(file_dict=None):
     payment_df = dataframe_creator_single("payment_type", file_dict)
-    if payment_df:
+    if isinstance(payment_df, pd.DataFrame):
         payment_df = payment_df.drop(['created_at', 'last_updated'], axis=1)
         return payment_df
     else:
@@ -50,7 +49,7 @@ def payment_type_dim(file_dict=None):
 
 def staff_dim(file_dict=None):
     part_staff_df = dataframe_creator_single("staff", file_dict)
-    if part_staff_df:
+    if isinstance(part_staff_df, pd.DataFrame):
         department_df = dataframe_creator_single("department", file_dict)
 
         full_staff_df = part_staff_df.join(
@@ -66,7 +65,7 @@ def staff_dim(file_dict=None):
 
 def counterparty_dim(file_dict=None):
     part_counterparty_df = dataframe_creator_single("counterparty", file_dict)
-    if part_counterparty_df:
+    if isinstance(part_counterparty_df, pd.DataFrame):
         address_df = dataframe_creator_single("address", file_dict)
         address_df["legal_address_id"] = address_df.index
         

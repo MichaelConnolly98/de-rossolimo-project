@@ -161,9 +161,7 @@ def dataframe_creator_single(table_name, file_dict=None):
     """
 
     try:
-        print(file_dict)
         if file_dict[table_name]:
-            print(file_dict)
             df = pd.json_normalize(file_dict[table_name])
             df.name = table_name
             df.set_index(f"{table_name}_id", inplace=True, drop=True)
