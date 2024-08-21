@@ -1,7 +1,6 @@
 from src.transform.dim_generator import create_date_table
 import pandas as pd
 from src.transform.dim_generator import currency_dim
-from src.transform.read_ingestion import read_ingestion_function
 from src.transform.dim_generator import counterparty_dim
 from src.transform.dim_generator import payment_type_dim
 from src.transform.dim_generator import staff_dim
@@ -45,16 +44,12 @@ class TestCreateDate:
         assert result["quarter"].dtype == "int32"
             
 class TestCurrencyDim:
-
-   
     def test_currency_dim_returns_data_frame(self):
-        dataframes = read_ingestion_function()
-        response_df = currency_dim(dataframes['currency'])
+        response_df = currency_dim()
         assert type(response_df) == pd.core.frame.DataFrame
 
     def test_currency_dim_returns_correct_columns(self):
-        dataframes = read_ingestion_function()
-        response_df = currency_dim(dataframes['currency'])
+        response_df = currency_dim()
         expected_columns = ['currency_code', 'currency_name']
         response_columns = list(response_df.columns.values)
         print(response_df.index)
@@ -63,17 +58,13 @@ class TestCurrencyDim:
         assert response_df.index.name=='currency_id'
         assert len(response_columns) == len(expected_columns)
 
-
     def test_currency_dim_returns_rows_with_correct_data_types(self):
-        dataframes = read_ingestion_function()
-        response_df = currency_dim(dataframes['currency'])
+        response_df = currency_dim()
         columns = ['currency_code', 'currency_name']
         for coulumn in columns:
             assert response_df.dtypes[coulumn] == object
 
 class TestDimCounterparty:
-
-
     def test_counterparty_dim_returns_dataframe(self):
         result = counterparty_dim()
         assert isinstance(result, pd.DataFrame)
@@ -105,17 +96,13 @@ class TestDimCounterparty:
         result = counterparty_dim()
         assert result.index.name == "counterparty_id"
 
-class TestDimPayment:
-
-
+class TestDimPaymentType:
     def test_payment_type_dim_returns_data_frame(self):
-        dataframes = read_ingestion_function()
-        response_df = payment_type_dim(dataframes['payment_type'])
+        response_df = payment_type_dim()
         assert type(response_df) == pd.core.frame.DataFrame
 
     def test_payment_type_dim_returns_correct_columns(self):
-        dataframes = read_ingestion_function()
-        response_df = payment_type_dim(dataframes['payment_type'])
+        response_df = payment_type_dim()
         expected_columns = ['payment_type_name']
         reponse_columns = list(response_df.columns.values)
         print(response_df.index)
@@ -125,15 +112,12 @@ class TestDimPayment:
         assert response_df.index.name=='payment_type_id'
 
     def test_payment_type_dim_returns_rows_with_correct_data_types(self):
-        dataframes = read_ingestion_function()
-        response_df = payment_type_dim(dataframes['payment_type'])
+        response_df = payment_type_dim()
         columns = ['payment_type_name']
         for coulumn in columns:
             assert response_df.dtypes[coulumn] == object
 
 class TestDimStaff:
-
-
     def test_staff_dim_returns_dataframe(self):
         result = staff_dim()
         assert isinstance(result, pd.DataFrame)
