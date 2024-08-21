@@ -1,6 +1,8 @@
 import pandas as pd
 from src.transform.currency_code_to_name import currency_code_to_name
 from src.transform.pandas_testing import dataframe_creator
+import json
+
 
 def create_date_table(
         start='2000-01-01',
@@ -27,21 +29,21 @@ def create_date_table(
     df.index.name="date_id"
     return df
 
-print(create_date_table())
 
-
-def currency_dim(currency_df):
+def currency_dim(file_dict=None):
+    currency_df = dataframe_creator("currency", file_dict)
     currency_df = currency_df.drop(['created_at', 'last_updated'], axis=1)
     currency_df["currency_name"] = currency_df["currency_code"].apply(currency_code_to_name)
     return currency_df
 
-def payment_type_dim(currency_df):
-    currency_df = currency_df.drop(['created_at', 'last_updated'], axis=1)
-    return currency_df
+def payment_type_dim(file_dict=None):
+    payment_df = dataframe_creator("payment_type", file_dict)
+    payment_df = payment_df.drop(['created_at', 'last_updated'], axis=1)
+    return payment_df
 
-def staff_dim():
-    part_staff_df = dataframe_creator(table_name="staff")
-    department_df = dataframe_creator(table_name="department")
+def staff_dim(file_dict=None):
+    part_staff_df = dataframe_creator("staff", file_dict)
+    department_df = dataframe_creator("department", file_dict)
 
     full_staff_df = part_staff_df.join(
         department_df, on="department_id", how="left", rsuffix="a"
@@ -52,9 +54,9 @@ def staff_dim():
     full_staff_df = full_staff_df[desired_columns_and_order]
     return full_staff_df
 
-def counterparty_dim():
-    part_counterparty_df = dataframe_creator(table_name="counterparty")
-    address_df = dataframe_creator(table_name="address")
+def counterparty_dim(file_dict=None):
+    part_counterparty_df = dataframe_creator("counterparty", file_dict)
+    address_df = dataframe_creator("address", file_dict)
     address_df["legal_address_id"] = address_df.index
     
 

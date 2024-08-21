@@ -143,53 +143,30 @@ def file_data(path_file="./pandas_test_data.json"):
                         list_to_add_to[table].append(ele)
                         file_contents_dict[table] = list_to_add_to[table]
 
-        #dont need to save it to a file, just means I don't have to run it everytime
-        with open(path_file, "w", encoding="utf-8") as f:
-            json.dump(file_contents_dict, f)
         return file_contents_dict
     except Exception as exception:
         logging.error({"Result": "Failure", "Error": f"An exception has occured: {str(exception)}"})
         raise Exception("An error has occured")
 
-def dataframe_creator(table_name=None, path_file="./pandas_test_data_copy.json"):
+def dataframe_creator(table_name, file_dict=None):
     """
-    Converts json data to pandas dataframe
+    Converts dict to pandas dataframe
 
     Parameters:
-    table_name - default None. If None, get's all table names and 
+    table_name - gets specific table name from file_data provided
     creates dataframe from each one, else uses the table parameter provided
 
     Returns:
-    list of dataframe if no table_name provided
-    OR
-    a single dataframe object
+
+    a single dataframe objects
     """
 
-    #currently opening from test_data - fine for first big dump, 
-    #need to sort out how this will pull from buckets in future
-    #file_data returns dicts always even if no data
-    #so it may be OK to make into a dataframe anyway
     try:
-        with open (path_file, "r") as f:
-            file_dict = json.load(f)
-            dataframe_list = []
-            if not table_name:
-                tables = get_table_names()
-                for table in tables:
-                    df = pd.json_normalize(file_dict[table])
-                    df.name = table
-                    df.set_index(f"{table}_id", inplace=True, drop=True)
-                    df.sort_index(inplace=True)
-                    dataframe_list.append(df)
-                return dataframe_list
-                
-            else:
-                df = pd.json_normalize(file_dict[table_name])
-                print(df)
-                df.name = table_name
-                df.set_index(f"{table_name}_id", inplace=True, drop=True)
-                df.sort_index(inplace=True)
-                return df
+            df = pd.json_normalize(file_dict[table_name])
+            df.name = table_name
+            df.set_index(f"{table_name}_id", inplace=True, drop=True)
+            df.sort_index(inplace=True)
+            return df
             
     except Exception as exception:
         logging.error({
@@ -197,6 +174,7 @@ def dataframe_creator(table_name=None, path_file="./pandas_test_data_copy.json")
             f"Error": "An exception has occured: {str(exception)"}
     )
         raise exception
+
     
 
 
