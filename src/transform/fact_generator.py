@@ -2,7 +2,7 @@ from src.transform.pandas_testing import dataframe_creator
 import pandas as pd
 
 def sales_facts():
-    sales_order = dataframe_creator("sales_order")
+    sales_order = dataframe_creator("sales_order", file_dict=None)
 
     sales_order["created_date"] = pd.to_datetime(pd.to_datetime(sales_order["created_at"], format="mixed").dt.date)
     sales_order["created_time"] = pd.to_datetime(sales_order["created_at"], format="mixed").dt.time
@@ -88,7 +88,7 @@ def purchase_order_facts():
     return purchase_order
 
 def payment_facts():
-    payment = dataframe_creator('payment')
+    payment = dataframe_creator('payment', file_dict=None)
 
     payment.drop(["company_ac_number", "counterparty_ac_number"], axis=1, inplace=True)
 
