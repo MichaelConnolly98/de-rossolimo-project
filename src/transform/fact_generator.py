@@ -43,8 +43,6 @@ def sales_facts():
     sales_order = sales_order[desired_order]
     sales_order.name = "fact_sales_order"
 
-    print(sales_order['unit_price'])
-
     return sales_order
 
 
