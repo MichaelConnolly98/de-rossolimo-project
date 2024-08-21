@@ -15,6 +15,8 @@ def sales_facts():
     sales_order["agreed_payment_date"] = pd.to_datetime(sales_order["agreed_payment_date"])
     sales_order["agreed_delivery_date"] = pd.to_datetime(sales_order["agreed_delivery_date"])
 
+    sales_order['unit_price'] = pd.to_numeric(sales_order['unit_price'])
+
     sales_order["sales_order_id"] = sales_order.index
     sales_order.rename(columns={
         "staff_id" : "sales_staff_id"
@@ -40,6 +42,8 @@ def sales_facts():
 
     sales_order = sales_order[desired_order]
     sales_order.name = "fact_sales_order"
+
+    print(sales_order['unit_price'])
 
     return sales_order
 
