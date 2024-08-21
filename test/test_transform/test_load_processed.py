@@ -8,6 +8,7 @@ import os
 from io import BytesIO
 import pyarrow.parquet as pq
 import logging
+import json
 
 
 logger = logging.getLogger("test")
@@ -34,9 +35,11 @@ def s3_client(aws_creds):
         )
         yield s3
 
+with open("pandas_test_data_copy.json", "r") as f:
+    file_dict=json.load(f)
 
 def test_func_transforms_to_parquet(s3_client):
-    dataf = dataframe_creator('address')
+    dataf = dataframe_creator('address', file_dict=file_dict)
     load_processed(dataf)
     
     #get object just loaded in
