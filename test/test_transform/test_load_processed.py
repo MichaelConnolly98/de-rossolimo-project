@@ -10,7 +10,7 @@ import pyarrow.parquet as pq
 import logging
 from unittest.mock import patch
 from datetime import datetime
-import pytest
+import json
 
 logger = logging.getLogger("test")
 logger.setLevel(logging.INFO)
