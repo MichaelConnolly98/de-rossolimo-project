@@ -113,7 +113,7 @@ def get_s3_file_content_from_keys(key_list: list, bucket_name="de-rossolimo-inge
         raise Exception("An error has occured")
     return data
 
-def file_data():
+def file_data(path_file="./pandas_test_data.json"):
     """
     Gets file data for every table stored in s3 bucket
 
@@ -144,14 +144,14 @@ def file_data():
                         file_contents_dict[table] = list_to_add_to[table]
 
         #dont need to save it to a file, just means I don't have to run it everytime
-        with open("./pandas_test_data.json", "w", encoding="utf-8") as f:
+        with open(path_file, "w", encoding="utf-8") as f:
             json.dump(file_contents_dict, f)
         return file_contents_dict
     except Exception as exception:
         logging.error({"Result": "Failure", "Error": f"An exception has occured: {str(exception)}"})
         raise Exception("An error has occured")
 
-def dataframe_creator(table_name=None):
+def dataframe_creator(table_name=None, path_file="./pandas_test_data_copy.json"):
     """
     Converts json data to pandas dataframe
 
@@ -170,7 +170,7 @@ def dataframe_creator(table_name=None):
     #file_data returns dicts always even if no data
     #so it may be OK to make into a dataframe anyway
     try:
-        with open ("./pandas_test_data.json", "r") as f:
+        with open (path_file, "r") as f:
             file_dict = json.load(f)
             dataframe_list = []
             if not table_name:
@@ -185,6 +185,7 @@ def dataframe_creator(table_name=None):
                 
             else:
                 df = pd.json_normalize(file_dict[table_name])
+                print(df)
                 df.name = table_name
                 df.set_index(f"{table_name}_id", inplace=True, drop=True)
                 df.sort_index(inplace=True)
@@ -196,7 +197,7 @@ def dataframe_creator(table_name=None):
             f"Error": "An exception has occured: {str(exception)"}
     )
         raise exception
-            
+    
 
 
     
