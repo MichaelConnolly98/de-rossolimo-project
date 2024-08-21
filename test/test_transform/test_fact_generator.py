@@ -1,13 +1,17 @@
 from src.transform.fact_generator import sales_facts, purchase_order_facts, payment_facts
 import pandas as pd
+import json
+
+with open("pandas_test_data_copy.json", "r") as f:
+    file_dict=json.load(f)
 
 class TestSalesFact:
     def test_sales_facts_returns_data_frame(self):
-        response_df = sales_facts()
+        response_df = sales_facts(file_dict=file_dict)
         assert type(response_df) == pd.core.frame.DataFrame
 
     def test_sales_facts_returns_correct_columns(self):
-        response_df = sales_facts()
+        response_df = sales_facts(file_dict=file_dict)
         expected_columns = [
             "sales_order_id", 
             "created_date", 
@@ -31,7 +35,7 @@ class TestSalesFact:
         assert len(response_columns) == len(expected_columns)
 
     def test_sales_facts_returns_rows_with_correct_data_types(self):
-        response_df = sales_facts()
+        response_df = sales_facts(file_dict=file_dict)
         assert response_df.dtypes['sales_order_id'] == 'int64'
         assert response_df.dtypes['created_date'] == '<M8[ns]'
         assert response_df.dtypes['created_time'] == object
@@ -49,11 +53,11 @@ class TestSalesFact:
 
 class TestPurchaseOrderFact:
     def test_purchase_order_facts_returns_data_frame(self):
-        response_df = purchase_order_facts()
+        response_df = purchase_order_facts(file_dict=file_dict)
         assert type(response_df) == pd.core.frame.DataFrame
 
     def test_purchase_order_facts_returns_correct_columns(self):
-        response_df = purchase_order_facts()
+        response_df = purchase_order_facts(file_dict=file_dict)
         expected_columns = [
             "purchase_order_id", 
             "created_date", 
@@ -78,7 +82,7 @@ class TestPurchaseOrderFact:
         assert len(response_columns) == len(expected_columns)
 
     def test_purchase_order_facts_returns_rows_with_correct_data_types(self):
-        response_df = purchase_order_facts()
+        response_df = purchase_order_facts(file_dict=file_dict)
         assert response_df.dtypes['purchase_order_id'] == 'int64'
         assert response_df.dtypes['created_date'] == '<M8[ns]'
         assert response_df.dtypes['created_time'] == object
@@ -96,11 +100,11 @@ class TestPurchaseOrderFact:
 
 class TestPaymentFact:
     def test_payment_facts_returns_data_frame(self):
-        response_df = payment_facts()
+        response_df = payment_facts(file_dict=file_dict)
         assert type(response_df) == pd.core.frame.DataFrame
 
     def test_payment_facts_returns_correct_columns(self):
-        response_df = payment_facts()
+        response_df = payment_facts(file_dict=file_dict)
         expected_columns = [
         "payment_id", 
         "created_date", 
@@ -124,7 +128,7 @@ class TestPaymentFact:
         assert len(response_columns) == len(expected_columns)
 
     def test_payment_facts_returns_rows_with_correct_data_types(self):
-        response_df = payment_facts()
+        response_df = payment_facts(file_dict=file_dict)
         assert response_df.dtypes['payment_id'] == 'int64'
         assert response_df.dtypes['created_date'] == '<M8[ns]'
         assert response_df.dtypes['created_time'] == object
