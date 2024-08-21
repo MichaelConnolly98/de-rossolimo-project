@@ -36,6 +36,8 @@ def s3_client(aws_creds):
         )
         yield s3
 
+with open("pandas_test_data_copy.json", "r") as f:
+    file_dict=json.load(f)
 
 @patch('src.transform.load_processed.datetime')
 def test_func_transforms_to_parquet(datetime_patch, s3_client):
