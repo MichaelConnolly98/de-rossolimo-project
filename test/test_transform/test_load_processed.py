@@ -40,21 +40,24 @@ with open("pandas_test_data_copy.json", "r") as f:
     file_dict=json.load(f)
 
 @patch('src.transform.load_processed.datetime')
-def test_func_transforms_to_parquet(datetime_patch, s3_client):
-    datetime_patch.now.return_value = datetime(2002, 11, 9, 16, 38, 23)
-    dataf = dataframe_creator('address')
-    load_processed(dataf)
-    
-    #get object just loaded in
-    s3_object = s3_client.get_object(Bucket='test-bucket', Key='table=address/year=2002/month=11/day=9/16:38:23.parquet')
-    #read bytes
-    buffer = BytesIO(s3_object['Body'].read())
-    #convert to table
-    table = pq.read_table(buffer)
-    #convert to dataframe
-    df = table.to_pandas()
-    #assert dataframe from s3 bucket is same as dataframe passed to function
-    assert df.equals(dataf)
+def test_func_transforms_to_parquet(datetime_patch, s3_client, caplog):
+     with caplog.at_level(logging.INFO):
+        datetime_patch.now.return_value = datetime(2002, 11, 9, 16, 38, 23)
+        dataf = dataframe_creator('address', file_dict)
+        result = load_processed(dataf)
+        
+        #get object just loaded in
+        s3_object = s3_client.get_object(Bucket='test-bucket', Key='table=address/year=2002/month=11/day=9/16:38:23.parquet')
+        #read bytes
+        buffer = BytesIO(s3_object['Body'].read())
+        #convert to table
+        table = pq.read_table(buffer)
+        #convert to dataframe
+        df = table.to_pandas()
+        #assert dataframe from s3 bucket is same as dataframe passed to function
+        assert df.equals(dataf)
+        assert "data uploaded at" in caplog.text
+        assert result == {"Result": "Success", "Message": "data uploaded"}
 
 def test_raises_exception_when_not_passed_df(s3_client, caplog):
     fake_data = {
@@ -77,8 +80,14 @@ def test_raises_exception_when_not_passed_df(s3_client, caplog):
 @patch('src.transform.load_processed.datetime')
 def test_is_saved_into_s3_in_correct_file_structure(datetime_patch, s3_client):
     datetime_patch.now.return_value = datetime(2002, 11, 9, 16, 38, 23)
-    dataf = dataframe_creator('address')
+    dataf = dataframe_creator('address', file_dict)
     load_processed(dataf)
 
     s3_object_list = s3_client.list_objects_v2(Bucket='test-bucket')
     assert s3_object_list['Contents'][0]['Key'] == 'table=address/year=2002/month=11/day=9/16:38:23.parquet'
+
+
+def test_no_data_is_uploaded_when_passed_none(s3_client, caplog):
+    with caplog.at_level(logging.INFO):
+        assert load_processed(None) == {"Message": "no data to upload"}
+        assert "no data to upload" in caplog.text
