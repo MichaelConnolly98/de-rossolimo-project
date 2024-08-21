@@ -56,7 +56,6 @@ class TestCurrencyDim:
         response_df = currency_dim(file_dict=file_dict)
         expected_columns = ['currency_code', 'currency_name']
         response_columns = list(response_df.columns.values)
-        print(response_df.index)
         for column in expected_columns:
             assert column in response_columns
         assert response_df.index.name=='currency_id'
