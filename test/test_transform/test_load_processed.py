@@ -5,8 +5,14 @@ from moto import mock_aws
 import boto3
 import pytest
 import os
-from io import BytesIO, StringIO
+from io import BytesIO
 import pyarrow.parquet as pq
+import logging
+
+
+logger = logging.getLogger("test")
+logger.setLevel(logging.INFO)
+logger.propagate = True
 
 @pytest.fixture()
 def aws_creds():
@@ -29,19 +35,35 @@ def s3_client(aws_creds):
         yield s3
 
 
-# def test_func_transforms_to_parquet(s3_client):
-#     dataf = dataframe_creator('address')
-#     load_processed(dataf)
-
-#     #get object just loaded in
-#     s3_object = s3_client.get_object(Bucket='test-bucket', Key='test')
-#     #get streaming body of object
-#     sb = s3_object['Body']
-#     #read streaming body
-#     parq = sb.read()
-
-#     in_buffer = BytesIO(parq)
-#     df = pd.DataFrame(in_buffer)
-#     print(df)
+def test_func_transforms_to_parquet(s3_client):
+    dataf = dataframe_creator('address')
+    load_processed(dataf)
     
-    # read into dataframe and compare
+    #get object just loaded in
+    s3_object = s3_client.get_object(Bucket='test-bucket', Key='test')
+    #read bytes
+    buffer = BytesIO(s3_object['Body'].read())
+    #convert to table
+    table = pq.read_table(buffer)
+    #convert to dataframe
+    df = table.to_pandas()
+    #assert dataframe from s3 bucket is same as dataframe passed to function
+    assert df.equals(dataf)
+
+def test_raises_exception_when_not_passed_df(s3_client, caplog):
+    fake_data = {
+        "all_data": {
+            "table1": [
+                {"house_number": 5, "street": "first_street"},
+                {"house_number": 6, "street": "second_street"},
+            ],
+            "table2": [
+                {"seller_id": 1, "name": "Nick"},
+                {"seller_id": 2, "name": "Mike"},
+            ],
+        }
+    }
+    with caplog.at_level(logging.INFO):
+        with pytest.raises(AttributeError):
+            load_processed(fake_data)
+            assert {'Result': "Failure", 'Error': "AttributeError occurred:"} in caplog.text
