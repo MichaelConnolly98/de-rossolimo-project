@@ -1,5 +1,5 @@
-from src.transform.load_processed import load_processer
-from src.transform.pandas_testing import dataframe_creator
+from utils.load_processed import load_processer
+from utils.pandas_testing import dataframe_creator
 import pandas as pd
 from moto import mock_aws
 import boto3
@@ -39,7 +39,7 @@ def s3_client(aws_creds):
 with open("pandas_test_data_copy.json", "r") as f:
     file_dict=json.load(f)
 
-@patch('src.transform.load_processed.datetime')
+@patch('utils.load_processed.datetime')
 def test_func_transforms_to_parquet(datetime_patch, s3_client, caplog):
      with caplog.at_level(logging.INFO):
         datetime_patch.now.return_value = datetime(2002, 11, 9, 16, 38, 23)
@@ -77,7 +77,7 @@ def test_raises_exception_when_not_passed_df(s3_client, caplog):
             load_processer(fake_data)
             assert {'Result': "Failure", 'Error': "AttributeError occurred:"} in caplog.text
 
-@patch('src.transform.load_processed.datetime')
+@patch('utils.load_processed.datetime')
 def test_is_saved_into_s3_in_correct_file_structure(datetime_patch, s3_client):
     datetime_patch.now.return_value = datetime(2002, 11, 9, 16, 38, 23)
     dataf = dataframe_creator('address', file_dict)
