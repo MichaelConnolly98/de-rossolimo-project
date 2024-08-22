@@ -24,8 +24,9 @@ def load_processer(df_name, df, bucket_name=S3_BUCKET_NAME):
         date = datetime.now()
         folder_name = datetime.now().strftime("%Y-%m-%d")
         folder_name_2 = datetime.now().strftime("%H:%M:%S")
+        table_name = df_name
         if df is not None:
-            table_name = df_name
+            
             
             #aws client that connects to s3
             s3 = boto3.client('s3')
@@ -41,11 +42,10 @@ def load_processer(df_name, df, bucket_name=S3_BUCKET_NAME):
             )
             # return value is logged?
             logger.info({"Result": "Success", "Message": f"{table_name} data uploaded at {folder_name} {folder_name_2}"})
-            return {"Result": "Success", "Message": "data uploaded"}
+            return table_name
 
         else:
             logger.info({"Message": f"no data to upload at {folder_name} {folder_name_2}"})
-            return {"Message": "no data to upload"}
     except AttributeError as ae:
         logger.error({"Result": "Failure", "Error": f"AttributeError occurred: {str(ae)}"})
         raise ae 

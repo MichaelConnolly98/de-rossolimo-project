@@ -57,7 +57,7 @@ def test_func_transforms_to_parquet(datetime_patch, s3_client, caplog):
         #assert dataframe from s3 bucket is same as dataframe passed to function
         assert df.equals(dataf)
         assert "data uploaded at" in caplog.text
-        assert result == {"Result": "Success", "Message": "data uploaded"}
+        assert result == "address"
 
 def test_raises_exception_when_not_passed_df(s3_client, caplog):
     fake_data = {
@@ -89,5 +89,5 @@ def test_is_saved_into_s3_in_correct_file_structure(datetime_patch, s3_client):
 
 def test_no_data_is_uploaded_when_passed_none(s3_client, caplog):
     with caplog.at_level(logging.INFO):
-        assert load_processer(None, None) == {"Message": "no data to upload"}
+        assert load_processer(None, None) == None
         assert "no data to upload" in caplog.text

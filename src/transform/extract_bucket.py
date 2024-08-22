@@ -3,7 +3,7 @@ from utils.transformer import lambda_transformer
 import logging
 from botocore.exceptions import ClientError
 import os
-
+import json
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -18,9 +18,12 @@ else:
 
 def lambda_handler(event, context):
     dataframe_dict = lambda_transformer()
+    dataframe_successes = []
     for key, dataframe in dataframe_dict.items():
-        load_processer(key, dataframe, bucket_name=S3_BUCKET_NAME, )
+        dataframe_successes.append(load_processer(key, dataframe, bucket_name=S3_BUCKET_NAME))
+    dataframe_successes = [x for x in dataframe_successes if x != None]
     logger.info({"Result": "Success", "Message": "Lambda Handler ran successfully"})
+    return json.dumps(dataframe_successes)
 
 
 
