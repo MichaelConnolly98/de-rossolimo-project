@@ -6,9 +6,15 @@ import json
 from pprint import pprint
 import pandas as pd
 from botocore.exceptions import ClientError
+import os
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+import os
+if os.getenv("S3_DATA_BUCKET_NAME") != None:
+    S3BUCKETDATA = os.environ["S3_DATA_BUCKET_NAME"]
+else:
+    S3BUCKETDATA = "de-rossolimo-ingestion-20240812125359611100000001"
 
 #should i put the get_connection in the parameters instead? 
 def get_table_names_single(connection=get_connection):
@@ -49,7 +55,7 @@ def get_table_names_single(connection=get_connection):
 
 #change bucket name to dynamic
 
-def get_most_recent_key_per_table_from_s3_single(s3_table_name_prefix, bucket_name="de-rossolimo-ingestion-20240812125359611100000001"):
+def get_most_recent_key_per_table_from_s3_single(s3_table_name_prefix, bucket_name=S3BUCKETDATA):
     """
     Gets all key paths for a file prefix in s3 bucket
 
@@ -79,7 +85,7 @@ def get_most_recent_key_per_table_from_s3_single(s3_table_name_prefix, bucket_na
         raise k
     
 #change bucket name to dynamic
-def get_s3_file_content_from_key_single(key: list, bucket_name="de-rossolimo-ingestion-20240812125359611100000001"):
+def get_s3_file_content_from_key_single(key: list, bucket_name=S3BUCKETDATA):
     """
     Gets file contents from s3 key list
 
@@ -173,7 +179,7 @@ def dataframe_creator_single(table_name, file_dict=None):
     except Exception as exception:
         logging.error({
             "Result": "Failure",
-            f"Error": "An exception has occured: {str(exception)"}
+            "Error": f"An exception has occured: {str(exception)}"}
     )
         raise exception
 

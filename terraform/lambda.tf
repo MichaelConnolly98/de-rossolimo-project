@@ -82,7 +82,7 @@ resource "aws_lambda_function" "lambda_transform" {
      runtime = "python3.12"
      timeout = 60
      depends_on = [ aws_s3_object.lambda_transform, aws_lambda_layer_version.dependency_layer ]
-     layers = [ aws_lambda_layer_version.dependency_layer.arn ]
+     layers = [  aws_lambda_layer_version.utility_layer.arn, aws_lambda_layer_version.dependency_layer.arn ]
     environment {
       variables = {
         S3_DATA_BUCKET_NAME = aws_s3_bucket.data_bucket.id
