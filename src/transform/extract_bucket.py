@@ -1,5 +1,5 @@
 from src.transform.dim_generator import create_date_table, currency_dim,\
-payment_type_dim, staff_dim, counterparty_dim
+payment_type_dim, staff_dim, counterparty_dim, location_dim, design_dim
 from src.transform.fact_generator import sales_facts, payment_facts,\
 purchase_order_facts
 from src.transform.most_recent_pandas import file_data_single
@@ -22,9 +22,12 @@ def lambda_handler(event, context):
             "payment_dim" : payment_type_dim(file_dict=file_dict),
             "staff_dim" : staff_dim(file_dict=file_dict),
             "counterparty_dim" : counterparty_dim(file_dict=file_dict),
+            "location_dim" :location_dim(file_dict=file_dict),
+            "design_dim" : design_dim(file_dict=file_dict),
             "sales_facts" : sales_facts(file_dict=file_dict),
             "payment_facts" : payment_facts(file_dict=file_dict),
             "purchase_order_facts" : purchase_order_facts(file_dict=file_dict)
+    
         }
         
         dataframe_values = [x for x in dataframe_dict.values() if x is None]
