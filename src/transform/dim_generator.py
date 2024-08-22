@@ -1,6 +1,6 @@
 import pandas as pd
-from src.transform.currency_code_to_name import currency_code_to_name
-from src.transform.most_recent_pandas import dataframe_creator_single
+from currency_code_to_name import currency_code_to_name
+from most_recent_pandas import dataframe_creator_single
 import json
 
 

@@ -1,11 +1,17 @@
 import boto3
 from botocore.exceptions import ClientError
 import logging
-from src.transform.pandas_testing import get_table_names
+from pandas_testing import get_table_names
+import os
 
 
 
-def get_most_recent_key_per_table_from_s3(s3_table_name_prefix, bucket_name="de-rossolimo-ingestion-20240812125359611100000001"):
+if os.environ.get["S3_DATA_BUCKET_NAME"] != None:
+    S3BUCKETDATA = os.environ["S3_DATA_BUCKET_NAME"]
+else:
+    S3BUCKETDATA = "de-rossolimo-ingestion-20240812125359611100000001"
+
+def get_most_recent_key_per_table_from_s3(s3_table_name_prefix, bucket_name=S3BUCKETDATA):
     """
     Gets all key paths for a file prefix in s3 bucket
 

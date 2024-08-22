@@ -6,9 +6,14 @@ import json
 from pprint import pprint
 import pandas as pd
 from botocore.exceptions import ClientError
+import os
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+if os.getenv("S3_DATA_BUCKET_NAME") != None:
+    S3BUCKETDATA = os.environ["S3_DATA_BUCKET_NAME"]
+else:
+    S3BUCKETDATA = "de-rossolimo-ingestion-20240812125359611100000001"
 
 #should i put the get_connection in the parameters instead? 
 def get_table_names(connection=get_connection):

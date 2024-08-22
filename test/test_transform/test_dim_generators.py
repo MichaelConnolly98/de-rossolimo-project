@@ -2,7 +2,10 @@ from src.transform.dim_generator import create_date_table
 import pandas as pd
 from src.transform.dim_generator import currency_dim, counterparty_dim, payment_type_dim, staff_dim, location_dim, design_dim
 import json
+import os
 
+with open("s3_bucket_name.txt") as file:
+    os.environ['S3_DATA_BUCKET_NAME'] = file.readline()
 
 with open("pandas_test_data_copy.json", "r") as f:
     file_dict=json.load(f)
