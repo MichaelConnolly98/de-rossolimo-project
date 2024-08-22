@@ -54,4 +54,6 @@ jobs:
       run: terraform plan
     - name: Apply
       working-directory: terraform
-      run: terraform apply --auto-approve
+      env:
+        TF_VAR_emails: ${{ secrets.EMAIL }}
+      run: terraform apply --auto-approve -input=false
