@@ -18,14 +18,11 @@ def sales_facts(file_dict=None):
 
         sales_order['unit_price'] = pd.to_numeric(sales_order['unit_price'])
 
-        sales_order["sales_order_id"] = sales_order.index
         sales_order.rename(columns={
             "staff_id" : "sales_staff_id"
         }, inplace=True)
-        sales_order.index.name = "sales_record_id"
 
-        desired_order = [
-            "sales_order_id", 
+        desired_order = [ 
             "created_date", 
             "created_time", 
             "last_updated_date", 
@@ -64,12 +61,7 @@ def purchase_order_facts(file_dict=None):
         purchase_order["agreed_delivery_date"] = pd.to_datetime(purchase_order["agreed_delivery_date"])
 
         purchase_order['item_unit_price'] = pd.to_numeric(purchase_order['item_unit_price'])
-
-        purchase_order["purchase_order_id"] = purchase_order.index
-        purchase_order.index.name = "purchase_record_id"
-
         desired_order = [
-            "purchase_order_id", 
             "created_date", 
             "created_time", 
             "last_updated_date", 
@@ -111,11 +103,8 @@ def payment_facts(file_dict=None):
 
         payment['payment_amount'] = pd.to_numeric(payment['payment_amount'])
 
-        payment["payment_id"] = payment.index
-        payment.index.name = "payment_record_id"
 
         desired_order = [
-            "payment_id", 
             "created_date", 
             "created_time", 
             "last_updated_date", 
