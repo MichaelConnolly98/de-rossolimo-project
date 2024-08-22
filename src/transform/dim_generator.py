@@ -92,3 +92,25 @@ def counterparty_dim(file_dict=None):
         return None
 
 
+def location_dim(file_dict=None):
+    location_df = dataframe_creator_single("address", file_dict)
+    if isinstance(location_df, pd.DataFrame):
+        location_df["location_id"]=location_df.index
+        location_df.set_index("location_id", inplace=True)
+        location_df = location_df.drop(['created_at', 'last_updated'], axis=1)
+        return location_df
+    else:
+        return None
+
+
+def design_dim(file_dict=None):
+    design_df = dataframe_creator_single("design", file_dict)
+    if isinstance(design_df, pd.DataFrame):
+        desired_columns_and_order = [
+            "design_name", "file_location", "file_name"
+            ]
+        design_df = design_df[desired_columns_and_order]
+        return design_df
+    else:
+        return None
+

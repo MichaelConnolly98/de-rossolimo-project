@@ -24,6 +24,8 @@ def test_lambda_handler_returns_dataframes_as_values(test_file_dict):
             "payment_dim",
             "staff_dim",
             "counterparty_dim",
+            "location_dim",
+            "design_dim",
             "sales_facts",
             "payment_facts",
             "purchase_order_facts"]:
@@ -45,6 +47,8 @@ def test_lambda_handler_returns_None_if_keys_present_but_data_not(
                                     "payment" : [],
                                     "staff" : [],
                                     "counterparty" : [],
+                                    "address": [],
+                                    "design" : [],
                                     "sales_order" : [],
                                     "payment_type" : [],
                                     "purchase_order": []}
@@ -63,11 +67,13 @@ def test_lambda_handler_catches_and_logs_errors(test_file_error, caplog):
 @patch("src.transform.extract_bucket.payment_type_dim")
 @patch("src.transform.extract_bucket.staff_dim")
 @patch("src.transform.extract_bucket.counterparty_dim")
+@patch("src.transform.extract_bucket.location_dim")
+@patch("src.transform.extract_bucket.design_dim")
 @patch("src.transform.extract_bucket.sales_facts")
 @patch("src.transform.extract_bucket.payment_facts")
 @patch("src.transform.extract_bucket.purchase_order_facts")
 def test_lambda_handler_invokes_all_dataframe_creater_subfunctions(
-    po, pf, sf, cp, st, pt, cu, cd, test_file_dict
+    po, pf, sf, de, lo, cp, st, pt, cu, cd, test_file_dict
     ):
     lambda_handler(0,0)
     po.assert_called_once()
@@ -78,5 +84,7 @@ def test_lambda_handler_invokes_all_dataframe_creater_subfunctions(
     pt.assert_called_once()
     cu.assert_called_once()
     cd.assert_called_once()
+    lo.assert_called_once()
+    de.assert_called_once()
     
     

@@ -1,10 +1,8 @@
 from src.transform.dim_generator import create_date_table
 import pandas as pd
-from src.transform.dim_generator import currency_dim
-from src.transform.dim_generator import counterparty_dim
-from src.transform.dim_generator import payment_type_dim
-from src.transform.dim_generator import staff_dim
+from src.transform.dim_generator import currency_dim, counterparty_dim, payment_type_dim, staff_dim, location_dim, design_dim
 import json
+
 
 with open("pandas_test_data_copy.json", "r") as f:
     file_dict=json.load(f)
@@ -143,4 +141,53 @@ class TestDimStaff:
         result = staff_dim(file_dict=file_dict)
         assert result.index.name == "staff_id"
 
-            
+class TestDimLocation:
+    def test_location_dim_returns_dataframe(self):
+        result = location_dim(file_dict)
+        assert isinstance(result, pd.DataFrame)
+
+    def test_location_dim_has_required_columns(self):
+        result = location_dim(file_dict)
+        for el in [
+        "address_line_1", "address_line_2", "district", "city", "postal_code", "country", "phone"
+            ]:
+            assert el in result.columns
+                    
+    def test_location_dim_data_types_are_expected(self):
+        result = location_dim(file_dict)
+        assert result["address_line_1"].dtype == "object"
+        assert result["address_line_2"].dtype == "object"
+        assert result["district"].dtype == "object"
+        assert result["city"].dtype == "object"
+        assert result["postal_code"].dtype == "object"
+        assert result["country"].dtype == "object"
+        assert result["phone"].dtype == "object"
+
+    def test_location_dim_index_is_expected(self):
+        result = location_dim(file_dict=file_dict)
+        assert result.index.name == "location_id"
+
+
+class TestDimDesign:
+    def test_design_dim_returns_dataframe(self):
+        result = design_dim(file_dict=file_dict)
+        assert isinstance(result, pd.DataFrame)
+
+    def test_design_dim_has_required_columns(self):
+        result = design_dim(file_dict=file_dict)
+        for el in [
+        "design_name", "file_location", "file_name"
+            ]:
+            assert el in result.columns
+                    
+    def test_design_dim_data_types_are_expected(self):
+        result = design_dim(file_dict=file_dict)
+        assert result["design_name"].dtype == "object"
+        assert result["file_location"].dtype == "object"
+        assert result["file_name"].dtype == "object"
+
+    def test_design_dim_index_is_expected(self):
+        result = design_dim(file_dict=file_dict)
+        assert result.index.name == "design_id"
+
+    
