@@ -18,9 +18,9 @@ else:
 
 def lambda_handler(event, context):
     dataframe_dict = lambda_transformer()
-    for dataframe in dataframe_dict.values():
-        load_processer(dataframe, bucket_name=S3_BUCKET_NAME)
-    logger.info({{"Result": "Success", "Message": "Lambda Handler ran successfully"}})
+    for key, dataframe in dataframe_dict.items():
+        load_processer(key, dataframe, bucket_name=S3_BUCKET_NAME, )
+    logger.info({"Result": "Success", "Message": "Lambda Handler ran successfully"})
 
 
 

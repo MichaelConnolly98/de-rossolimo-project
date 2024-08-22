@@ -19,13 +19,13 @@ if os.getenv("S3_PROCESS_BUCKET_NAME") == None:
 else:
     S3_BUCKET_NAME = os.environ["S3_PROCESS_BUCKET_NAME"]
 
-def load_processer(df, bucket_name=S3_BUCKET_NAME):
+def load_processer(df_name, df, bucket_name=S3_BUCKET_NAME):
     try:
         date = datetime.now()
         folder_name = datetime.now().strftime("%Y-%m-%d")
         folder_name_2 = datetime.now().strftime("%H:%M:%S")
         if df is not None:
-            table_name = df.name
+            table_name = df_name
             
             #aws client that connects to s3
             s3 = boto3.client('s3')
