@@ -1,4 +1,4 @@
-from src.transform.pandas_testing import dataframe_creator
+from utils.pandas_testing import dataframe_creator
 import pandas as pd
 from unittest.mock import patch, Mock
 import pytest
@@ -24,7 +24,7 @@ def test_dataframe_creator_has_correct_index_without_zero():
     result = dataframe_creator("staff", file_dict=test_full_dict)
     assert 0 not in result.index
 
-@patch('src.transform.pandas_testing.json.load')
+@patch('utils.pandas_testing.json.load')
 def test_dataframe_creator_returns_dataframes_with_expected_columns(json_load):
     json_load.return_value = test_dict
     result = dataframe_creator("address", file_dict=test_full_dict)
@@ -39,7 +39,7 @@ def test_dataframe_creator_returns_dataframes_with_expected_columns(json_load):
                     "created_at", 
                     "last_updated"]
 
-@patch('src.transform.pandas_testing.json.load', side_effect=Exception)
+@patch('utils.pandas_testing.json.load', side_effect=Exception)
 def test_dataframe_creator_errors_are_logged(json_load, caplog):
     with pytest.raises(Exception):
         dataframe_creator("design")

@@ -1,6 +1,6 @@
-from src.transform.dim_generator import create_date_table
+from utils.dim_generator import create_date_table
 import pandas as pd
-from src.transform.dim_generator import currency_dim, counterparty_dim, payment_type_dim, staff_dim, location_dim, design_dim
+from utils.dim_generator import currency_dim, counterparty_dim, payment_type_dim, staff_dim, location_dim, design_dim
 import json
 import os
 
