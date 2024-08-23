@@ -100,13 +100,13 @@ resource "aws_lambda_function" "lambda_transform" {
 data "archive_file" "lambda_load_data" {
   type = "zip"
   output_file_mode = "0666"
-  source_dir = "${path.module}/../src/transform"
+  source_dir = "${path.module}/../src/load"
   output_path = "${path.module}/../lambda_packages/load.zip"
 }
 
 resource "aws_lambda_function" "lambda_load" {
      function_name = "${var.load_lambda}-de_rossolimo"
-     source_code_hash = data.archive_file.lambda_transform_data.output_base64sha256
+     source_code_hash = data.archive_file.lambda_load_data.output_base64sha256
      s3_bucket = aws_s3_bucket.code_bucket.bucket
      s3_key = "lambda/load.zip"
      role =  aws_iam_role.load_lambda_role.arn
