@@ -1,5 +1,5 @@
 #####################
-#lambda to s3 policy documents and roles
+#Extract lambda to s3 policy documents and roles
 #####################
 
 resource "aws_iam_role" "lambda_role" {
@@ -67,7 +67,9 @@ data "aws_iam_policy_document" "cw_document" {
      effect = "Allow"
       actions = [ "logs:CreateLogStream", "logs:PutLogEvents", "logs:DescribeLogStreams", "logs:FilterLogEvents" ]
       resources = [ "arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/extract-de_rossolimo:*", 
-      "arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/transform-de_rossolimo:*"]
+      "arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/transform-de_rossolimo:*",
+      "arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/load-de_rossolimo:*"]
+
   }
 }
 
@@ -83,6 +85,7 @@ resource "aws_iam_role_policy_attachment" "lambda_cw_policy_attachment" {
   role = aws_iam_role.lambda_role.name
   policy_arn = aws_iam_policy.cw_policy.arn
 }
+
 
 #allows lambda to access secrets
 resource "aws_iam_role_policy" "sm_policy" {
@@ -193,4 +196,68 @@ resource "aws_iam_role_policy" "sm_transform_policy" {
       },
     ]
   })
+}
+
+#####################
+#load lambda to s3 policy documents and roles
+#####################
+
+resource "aws_iam_role" "load_lambda_role" {
+  name_prefix        = "load-role-de-rossolimo-lambdas-"
+  assume_role_policy = <<EOF
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "sts:AssumeRole"
+                ],
+                "Principal": {
+                    "Service": [
+                        "lambda.amazonaws.com"
+                    ]
+                }
+            }
+        ]
+    }
+    EOF
+}
+
+
+data "aws_iam_policy_document" "load_s3_document" {
+  statement {
+
+    actions = [ "s3:PutObject", "s3:GetObject", "s3:ListBucket" ]
+
+    resources = [
+      "${aws_s3_bucket.code_bucket.arn}/*",
+      "${aws_s3_bucket.processed_data_bucket.arn}/*",
+
+    ]
+  }
+  
+  statement{
+    actions = [ "s3:PutObject", "s3:GetObject", "s3:ListBucket" ]
+
+    resources = [
+      "${aws_s3_bucket.code_bucket.arn}",
+      "${aws_s3_bucket.processed_data_bucket.arn}",
+    ]
+  }
+}
+
+resource "aws_iam_policy" "load_s3_policy" {
+  name_prefix = "load-s3-policy-lambda-"
+  policy      = data.aws_iam_policy_document.load_s3_document.json
+}
+
+resource "aws_iam_role_policy_attachment" "load_lambda_s3_policy_attachment" {
+  role       = aws_iam_role.load_lambda_role.name
+  policy_arn = aws_iam_policy.load_s3_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "load_lambda_cw_policy_attachment" {
+  role = aws_iam_role.load_lambda_role.name
+  policy_arn = aws_iam_policy.cw_policy.arn
 }

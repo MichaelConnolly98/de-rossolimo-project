@@ -91,3 +91,35 @@ resource "aws_lambda_function" "lambda_transform" {
       }
     }
 }
+
+
+
+####################################
+#Load Lambda Resources below
+####################################
+data "archive_file" "lambda_load_data" {
+  type = "zip"
+  output_file_mode = "0666"
+  source_dir = "${path.module}/../src/transform"
+  output_path = "${path.module}/../lambda_packages/load.zip"
+}
+
+resource "aws_lambda_function" "lambda_load" {
+     function_name = "${var.load_lambda}-de_rossolimo"
+     source_code_hash = data.archive_file.lambda_transform_data.output_base64sha256
+     s3_bucket = aws_s3_bucket.code_bucket.bucket
+     s3_key = "lambda/load.zip"
+     role =  aws_iam_role.load_lambda_role.arn
+     handler = "final_load.lambda_handler"
+     runtime = "python3.12"
+     timeout = 60
+     depends_on = [ aws_s3_object.lambda_load, aws_lambda_layer_version.dependency_layer ]
+     layers = [  aws_lambda_layer_version.utility_layer.arn, aws_lambda_layer_version.dependency_layer.arn, "arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python312:12" ]
+     memory_size = 512
+    environment {
+      variables = {
+        S3_DATA_BUCKET_NAME = aws_s3_bucket.data_bucket.id
+        S3_PROCESS_BUCKET_NAME = aws_s3_bucket.processed_data_bucket.id
+      }
+    }
+}
