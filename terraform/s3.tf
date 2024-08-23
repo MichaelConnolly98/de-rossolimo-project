@@ -83,7 +83,27 @@ resource "aws_s3_object" "lambda_transform" {
   depends_on = [ data.archive_file.lambda_transform_data]
 }
 
+#resource to apply versioning to data bucket above
+resource "aws_s3_bucket_versioning" "processed_data_bucket" {
+  bucket = aws_s3_bucket.processed_data_bucket.id
 
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+#resource to add rule to bucket that keeps data immutable
+resource "aws_s3_bucket_object_lock_configuration" "processed_data_bucket" {
+  depends_on = [ aws_s3_bucket_versioning.data_bucket ]
+  bucket = aws_s3_bucket.processed_data_bucket.id
+
+  rule {
+    default_retention {
+      mode = "GOVERNANCE"
+      days = 3626
+    }
+  }
+}
 
 
 
