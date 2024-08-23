@@ -64,6 +64,16 @@ resource "aws_s3_object" "util_layer_code" {
   source = "${path.module}/../lambda_packages/utils.zip"
 }
 
+# upload load archive code to lambda code bucket
+resource "aws_s3_object" "lambda_load" {
+  bucket = aws_s3_bucket.code_bucket.bucket
+  key = "lambda/load.zip"
+  source = "${path.module}/../lambda_packages/load.zip"
+  etag = filemd5("${path.module}/../lambda_packages/load.zip")
+  depends_on = [ data.archive_file.lambda_load_data]
+}
+
+
 ##########################
 #bucket for processed data
 ##########################

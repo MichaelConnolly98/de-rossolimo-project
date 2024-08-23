@@ -24,6 +24,11 @@ variable "transform_lambda" {
   default = "transform"
 }
 
+variable "load_lambda" {
+  type = string
+  default = "load"
+}
+
 variable "emails" {
   type = list(string)
 }
