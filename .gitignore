@@ -6,3 +6,4 @@
 cloudwatch.py
 /.coverage
 /transform.zip
+.env
