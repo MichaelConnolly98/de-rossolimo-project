@@ -38,6 +38,25 @@ data "aws_iam_policy_document" "state_machine_policy" {
                 "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:extract-de_rossolimo",
             ]
         }
+        statement {
+            effect = "Allow"
+            actions =  [
+                "lambda:InvokeFunction"
+            ]
+            resources = [
+                "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:transform-de_rossolimo:*",
+            ]
+        }
+        statement {
+            effect = "Allow"
+            actions =   [
+                "lambda:InvokeFunction"
+            ]
+            resources = [
+                "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:transform-de_rossolimo",
+            ]
+        }
+        
 }
 
 resource "aws_iam_role_policy" "state_machine_policy" {
