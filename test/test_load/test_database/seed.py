@@ -1,4 +1,4 @@
-from test.test_load.test_database.connection import test_local_db_connect as db
+from test.test_load.test_database.connection import db
 
 def seed():
     '''Seeds database'''
@@ -92,7 +92,7 @@ def create_dim_counterparty():
 def create_dim_payment_type():
     create_dim_payment_type_sql = '''CREATE TABLE dim_payment_type (
                         payment_type_id INT PRIMARY KEY,
-                        payment_type_name VARHCAR(50) NOT NULL);'''
+                        payment_type_name VARCHAR(50) NOT NULL);'''
     return db.run(create_dim_payment_type_sql)
 
 def create_dim_transaction():
