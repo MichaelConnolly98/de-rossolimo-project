@@ -1,4 +1,4 @@
-from src.transform.pandas_testing import get_keys_from_s3
+from utils.pandas_testing import get_keys_from_s3
 import pytest
 import boto3
 from moto import mock_aws
@@ -57,7 +57,7 @@ def test_get_s3_raises_error_on_incorrect_prefix(s3_client, caplog):
         get_keys_from_s3("nonsense", bucket_name="test-bucket")
     assert "No contents in Prefix or Bucket," in caplog.text
 
-@patch('src.transform.pandas_testing.boto3.client', side_effect=Exception)
+@patch('utils.pandas_testing.boto3.client', side_effect=Exception)
 def test_general_exceptions_are_caught(s3_client, caplog):
     with pytest.raises(Exception):
         get_keys_from_s3("nonsense")

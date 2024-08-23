@@ -25,7 +25,7 @@ def test_lambda_handler_catches_exceptions(
     load_mock, timestamp_mock, extract_mock, caplog
 ):
     with pytest.raises(Exception):
-        lambda_handler()
+        lambda_handler(0, 0)
     assert "Unexpected Exception occured in lambda_handler" in caplog.text
 
 
@@ -38,7 +38,7 @@ def test_lambda_handler_invokes_sub_functions_with_expected_values(
     timestamp_mock.return_value = "2000:00:00 00:00:00"
     extract_mock.return_value = "test"
 
-    lambda_handler()
+    lambda_handler(0, 0)
 
     extract_mock.assert_called_once()
     timestamp_mock.assert_called_once()

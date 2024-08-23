@@ -27,11 +27,13 @@ resource "aws_iam_role" "lambda_role" {
 data "aws_iam_policy_document" "s3_document" {
   statement {
 
-    actions = [ "s3:PutObject", "s3:GetObject" ]
+    actions = [ "s3:PutObject", "s3:GetObject", "s3:ListBucket" ]
 
     resources = [
       "${aws_s3_bucket.data_bucket.arn}/*",
       "${aws_s3_bucket.code_bucket.arn}/*",
+      "${aws_s3_bucket.processed_data_bucket.arn}/*",
+
     ]
   }
 }
@@ -131,13 +133,23 @@ resource "aws_iam_role" "transform_lambda_role" {
 
 data "aws_iam_policy_document" "transform_s3_doc" {
   statement {
+    effect = "Allow"
 
-    actions = [ "s3:PutObject", "s3:GetObject" ]
+    actions = [ "s3:*" ]
 
+    resources = [ 
+    "${aws_s3_bucket.data_bucket.arn}",
+    "${aws_s3_bucket.processed_data_bucket.arn}",
+    "${aws_s3_bucket.processed_data_bucket.arn}",
+    ]
+  }
+  statement{
+  effect = "Allow"
+  actions = [ "s3:*" ]
     resources = [
       "${aws_s3_bucket.data_bucket.arn}/*",
       "${aws_s3_bucket.code_bucket.arn}/*",
-      "${aws_s3_bucket.processed_data_bucket.arn}/*"
+      "${aws_s3_bucket.processed_data_bucket.arn}/*",
     ]
   }
 }
@@ -162,4 +174,23 @@ resource "aws_iam_role_policy_attachment" "transform_lambda_s3_policy_attachment
 resource "aws_iam_role_policy_attachment" "transform_lambda_cw_policy_attachment" {
   role = aws_iam_role.transform_lambda_role.name
   policy_arn = aws_iam_policy.cw_policy.arn
+}
+
+#attaches secrets manager policy to lambda transform
+resource "aws_iam_role_policy" "sm_transform_policy" {
+  name = "sm_access_permissions"
+  role = aws_iam_role.transform_lambda_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "secretsmanager:GetSecretValue",
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
 }
