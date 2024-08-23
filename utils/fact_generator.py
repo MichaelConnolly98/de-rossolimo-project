@@ -1,16 +1,24 @@
 from utils.most_recent_pandas import dataframe_creator_single
 import pandas as pd
 
+'''
+For the SQL INSERT, all the dates might neeed to be strings rather than date types
+TO DO: Finish converting all dates to strings if needed 
+
+'''
+
 def sales_facts(file_dict=None):
     
     sales_order = dataframe_creator_single("sales_order", file_dict)
     if isinstance(sales_order, pd.DataFrame):
-        sales_order["created_date"] = pd.to_datetime(pd.to_datetime(sales_order["created_at"], format="mixed").dt.date)
-        sales_order["created_time"] = pd.to_datetime(sales_order["created_at"], format="mixed").dt.time
+        # sales_order["created_date"] = pd.to_datetime(pd.to_datetime(sales_order["created_at"], format="mixed").dt.date)
+        # sales_order["created_time"] = pd.to_datetime(sales_order["created_at"], format="mixed").dt.time
+        sales_order["created_date"] = (pd.to_datetime(sales_order["created_at"], format="mixed")).dt.date
+        sales_order["created_time"] = (pd.to_datetime(sales_order["created_at"], format="mixed")).dt.time
         sales_order.drop(["created_at"], axis=1, inplace=True)
 
-        sales_order["last_updated_date"] = pd.to_datetime(pd.to_datetime(sales_order["last_updated"], format="mixed").dt.date)
-        sales_order["last_updated_time"] = pd.to_datetime(sales_order["last_updated"], format="mixed").dt.time
+        sales_order["last_updated_date"] = (pd.to_datetime(sales_order["last_updated"], format="mixed")).dt.date
+        sales_order["last_updated_time"] = (pd.to_datetime(sales_order["last_updated"], format="mixed")).dt.time
         sales_order.drop(["last_updated"], axis=1, inplace=True)
 
         sales_order["agreed_payment_date"] = pd.to_datetime(sales_order["agreed_payment_date"])
