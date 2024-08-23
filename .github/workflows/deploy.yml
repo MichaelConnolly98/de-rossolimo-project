@@ -18,6 +18,14 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
+    - name: Connect to PostgreSQL
+      env:
+        PG_USER: ${{ secrets.PG_USER }}
+        PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+        PG_DATABASE: test_totesys
+        PG_HOST: localhost
+        port: 5432
+      run: run_seed.py
     - name: Run Requirements
       run: make requirements
     - name: Run dev-setup
