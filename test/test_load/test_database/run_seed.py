@@ -1,5 +1,5 @@
 from test.test_load.test_database.seed import seed
-from test.test_load.test_database.connection import test_local_db_connect as db
+from test.test_load.test_database.connection import db
 
 # Do not change this code
 try:
