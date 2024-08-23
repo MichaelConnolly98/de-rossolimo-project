@@ -1,4 +1,4 @@
-from src.load.load_pq_to_db import load_to_dw
+from src.load.load_pq_to_df import load_pq_to_df
 from src.transform.pandas_testing import dataframe_creator
 from src.transform.load_processed import load_processer
 import pandas as pd
