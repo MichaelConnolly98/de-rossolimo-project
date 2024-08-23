@@ -47,11 +47,12 @@ resource "aws_s3_object" "lambda_extract" {
   depends_on = [ data.archive_file.lambda_extract ]
 }
 
-#upload extract lambda layer code to lambda code bucket
+# #upload extract lambda layer code to lambda code bucket
 resource "aws_s3_object" "layer_code" {
   bucket = aws_s3_bucket.code_bucket.bucket
   key = "lambda/layer.zip"
-  #etag = filemd5("${path.module}/../layer.zip")
+  #etag = filemd5("../layer.zip")
+  source_hash = data.archive_file.layer.output_base64sha256
   source = "${path.module}/../layer.zip"
 }
 

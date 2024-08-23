@@ -1,4 +1,4 @@
-from src.transform.currency_code_to_name import currency_code_to_name
+from utils.currency_code_to_name import currency_code_to_name
 import pytest
 
 def test_valid_currency_code_returns_name():

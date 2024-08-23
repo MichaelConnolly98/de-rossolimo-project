@@ -1,4 +1,4 @@
-from src.transform.fact_generator import sales_facts, purchase_order_facts, payment_facts
+from utils.fact_generator import sales_facts, purchase_order_facts, payment_facts
 import pandas as pd
 import json
 
