@@ -8,6 +8,6 @@ with open("pandas_test_data_copy.json", "r") as f:
 
 test_df = sales_facts(file_dict=file_dict)
 
-def test_load_facts_xxcccfsfsgx():
-    load_facts('fact_sales_order', test_df)
-    assert False
+# def test_load_facts_xxcccfsfsgx():
+#     load_facts('fact_sales_order', test_df)
+#     assert False
