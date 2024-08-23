@@ -36,7 +36,7 @@ def get_db_credentials(secret_name="totesys", sm_client=boto3.client("secretsman
     return secret
 
 
-def get_connection():
+def get_connection(secret_name="totesys"):
     """
     Connects to PSQL database, using credentials from get_db_credentials
     function
@@ -45,7 +45,7 @@ def get_connection():
     Instance of pg8000.native Connection object
     """
     try:
-        credentials_dict = get_db_credentials()
+        credentials_dict = get_db_credentials(secret_name)
 
         return Connection(
             user=credentials_dict["username"],
