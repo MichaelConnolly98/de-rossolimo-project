@@ -94,7 +94,7 @@ resource "aws_s3_bucket_versioning" "processed_data_bucket" {
 
 #resource to add rule to bucket that keeps data immutable
 resource "aws_s3_bucket_object_lock_configuration" "processed_data_bucket" {
-  depends_on = [ aws_s3_bucket_versioning.data_bucket ]
+  depends_on = [ aws_s3_bucket_versioning.processed_data_bucket ]
   bucket = aws_s3_bucket.processed_data_bucket.id
 
   rule {
