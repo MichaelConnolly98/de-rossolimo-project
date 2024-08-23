@@ -1,6 +1,6 @@
-from src.load.load_pq_to_df import load_pq_to_df
-from src.transform.pandas_testing import dataframe_creator
-from src.transform.load_processed import load_processer
+from utils.final_load_pq_to_df import load_pq_to_df
+from utils.pandas_testing import dataframe_creator
+from utils.load_processed import load_processer
 import pandas as pd
 from moto import mock_aws
 import boto3
