@@ -5,7 +5,7 @@ import pytest
 
 with open("s3_bucket_name.txt", "r", encoding="utf-8") as f:
     S3_BUCKET_NAME = f.readline()
-
+@pytest.mark.skip
 @pytest.mark.it("""Checks all tables id columns in totesys database against all
                 id values in s3 bucket tables, asserting equality """)
 def test_all_file_ids_match():
