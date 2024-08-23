@@ -10,7 +10,6 @@ def lambda_transformer():
         file_dict = file_data_single()
         #date table only needs to be their for first upload
         dataframe_dict ={
-            "date_table" : create_date_table(),
             "currency_table" : currency_dim(file_dict=file_dict),
             "payment_dim" : payment_type_dim(file_dict=file_dict),
             "staff_dim" : staff_dim(file_dict=file_dict),
