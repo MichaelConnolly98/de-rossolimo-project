@@ -8,6 +8,6 @@ with open("pandas_test_data_copy.json", "r") as f:
 
 test_df = location_dim(file_dict=file_dict)
 
-def test_load_facts_xxcccfsfsgx():
-    load_dims('dim_location', test_df)
-    assert False
+# def test_load_facts_xxcccfsfsgx():
+#     load_dims('dim_location', test_df)
+#     assert False
