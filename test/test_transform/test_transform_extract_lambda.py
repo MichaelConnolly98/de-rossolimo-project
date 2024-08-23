@@ -62,7 +62,7 @@ def test_lambda_transformer_catches_and_logs_errors(test_file_error, caplog):
         lambda_transformer()
     assert "Exception occured" in caplog.text
 
-@patch("utils.transformer.create_date_table")
+
 @patch("utils.transformer.currency_dim")
 @patch("utils.transformer.payment_type_dim")
 @patch("utils.transformer.staff_dim")
@@ -73,7 +73,7 @@ def test_lambda_transformer_catches_and_logs_errors(test_file_error, caplog):
 @patch("utils.transformer.payment_facts")
 @patch("utils.transformer.purchase_order_facts")
 def test_lambda_transformer_invokes_all_dataframe_creater_subfunctions(
-    po, pf, sf, de, lo, cp, st, pt, cu, cd, test_file_dict
+    po, pf, sf, de, lo, cp, st, pt, cu, test_file_dict
     ):
     lambda_transformer()
     po.assert_called_once()
@@ -83,7 +83,6 @@ def test_lambda_transformer_invokes_all_dataframe_creater_subfunctions(
     st.assert_called_once()
     pt.assert_called_once()
     cu.assert_called_once()
-    cd.assert_called_once()
     lo.assert_called_once()
     de.assert_called_once()
     
