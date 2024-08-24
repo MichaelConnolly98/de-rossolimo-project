@@ -1,0 +1,87 @@
+def create_dim_currency():
+    create_dim_currency_sql = '''CREATE TABLE parks (
+                            park_id SERIAL PRIMARY KEY,
+                            park_name VARCHAR(50) NOT NULL,
+                            year_opened INTEGER NOT NULL,
+                            annual_attendance INTEGER NOT NULL);'''
+        return db.run(create_dim_currency_sql)
+
+def create_dim_design():
+    create_dim_design_sql = '''CREATE TABLE parks (
+                            park_id SERIAL PRIMARY KEY,
+                            park_name VARCHAR(50) NOT NULL,
+                            year_opened INTEGER NOT NULL,
+                            annual_attendance INTEGER NOT NULL);'''
+        return db.run(create_dim_design_sql)
+
+def create_dim_date():
+    create_dim_date_sql = '''CREATE TABLE parks (
+                        park_id SERIAL PRIMARY KEY,
+                        park_name VARCHAR(50) NOT NULL,
+                        year_opened INTEGER NOT NULL,
+                        annual_attendance INTEGER NOT NULL);'''
+    return db.run(create_dim_date_sql)
+
+def create_dim_staff():
+    create_dim_staff_sql = '''CREATE TABLE parks (
+                        park_id SERIAL PRIMARY KEY,
+                        park_name VARCHAR(50) NOT NULL,
+                        year_opened INTEGER NOT NULL,
+                        annual_attendance INTEGER NOT NULL);'''
+    return db.run(create_dim_staff_sql)
+
+def create_dim_location():
+    create_dim_location_sql = '''CREATE TABLE parks (
+                        park_id SERIAL PRIMARY KEY,
+                        park_name VARCHAR(50) NOT NULL,
+                        year_opened INTEGER NOT NULL,
+                        annual_attendance INTEGER NOT NULL);'''
+    return db.run(create_dim_location_sql)
+
+def create_dim_counterparty():
+    create_dim_counterparty_sql = '''CREATE TABLE parks (
+                        park_id SERIAL PRIMARY KEY,
+                        park_name VARCHAR(50) NOT NULL,
+                        year_opened INTEGER NOT NULL,
+                        annual_attendance INTEGER NOT NULL);'''
+    return db.run(create_dim_counterparty_sql)
+
+def create_dim_payment_type():
+    create_dim_payment_type_sql = '''CREATE TABLE parks (
+                        park_id SERIAL PRIMARY KEY,
+                        park_name VARCHAR(50) NOT NULL,
+                        year_opened INTEGER NOT NULL,
+                        annual_attendance INTEGER NOT NULL);'''
+    return db.run(create_dim_payment_type_sql)
+
+def create_dim_transaction():
+    create_dim_transaction_sql = '''CREATE TABLE parks (
+                        park_id SERIAL PRIMARY KEY,
+                        park_name VARCHAR(50) NOT NULL,
+                        year_opened INTEGER NOT NULL,
+                        annual_attendance INTEGER NOT NULL);'''
+    return db.run(create_dim_transaction_sql)
+
+def create_fact_purchase_order():
+    create_fact_purchase_order_sql = '''CREATE TABLE parks (
+                        park_id SERIAL PRIMARY KEY,
+                        park_name VARCHAR(50) NOT NULL,
+                        year_opened INTEGER NOT NULL,
+                        annual_attendance INTEGER NOT NULL);'''
+    return db.run(create_fact_purchase_order_sql)
+
+def create_fact_payment():
+    create_fact_payment_sql = '''CREATE TABLE parks (
+                        park_id SERIAL PRIMARY KEY,
+                        park_name VARCHAR(50) NOT NULL,
+                        year_opened INTEGER NOT NULL,
+                        annual_attendance INTEGER NOT NULL);'''
+    return db.run(create_fact_payment_sql)
+
+def create_fact_sales_order():
+    create_fact_sales_order_sql = '''CREATE TABLE parks (
+                        park_id SERIAL PRIMARY KEY,
+                        park_name VARCHAR(50) NOT NULL,
+                        year_opened INTEGER NOT NULL,
+                        annual_attendance INTEGER NOT NULL);'''
+    return db.run(create_fact_sales_order_sql)
