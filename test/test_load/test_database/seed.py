@@ -2,17 +2,17 @@ from test.test_load.test_database.connection import db
 
 def seed():
     '''Seeds database'''
-    db.run("DROP TABLE IF EXISTS dim_currency;")
-    db.run("DROP TABLE IF EXISTS dim_design;")
-    db.run("DROP TABLE IF EXISTS dim_date;")
-    db.run("DROP TABLE IF EXISTS dim_staff;")
-    db.run("DROP TABLE IF EXISTS dim_location;")
-    db.run("DROP TABLE IF EXISTS dim_counterparty;")
-    db.run("DROP TABLE IF EXISTS dim_payment_type;")
-    db.run("DROP TABLE IF EXISTS dim_transaction;")
-    db.run("DROP TABLE IF EXISTS fact_purchase_order;")
-    db.run("DROP TABLE IF EXISTS fact_payment;")
-    db.run("DROP TABLE IF EXISTS fact_sales_order;")
+    db.run("DROP TABLE IF EXISTS dim_currency CASCADE;")
+    db.run("DROP TABLE IF EXISTS dim_design CASCADE;")
+    db.run("DROP TABLE IF EXISTS dim_date CASCADE;")
+    db.run("DROP TABLE IF EXISTS dim_staff CASCADE;")
+    db.run("DROP TABLE IF EXISTS dim_location CASCADE;")
+    db.run("DROP TABLE IF EXISTS dim_counterparty CASCADE;")
+    db.run("DROP TABLE IF EXISTS dim_payment_type CASCADE;")
+    db.run("DROP TABLE IF EXISTS dim_transaction CASCADE;")
+    db.run("DROP TABLE IF EXISTS fact_purchase_order CASCADE;")
+    db.run("DROP TABLE IF EXISTS fact_payment CASCADE;")
+    db.run("DROP TABLE IF EXISTS fact_sales_order CASCADE;")
 
 
     create_dim_currency()
@@ -44,7 +44,7 @@ def create_dim_design():
 
 def create_dim_date():
     create_dim_date_sql = '''CREATE TABLE dim_date (
-                        date_id INT PRIMARY KEY,
+                        date_id DATE PRIMARY KEY,
                         year INTEGER NOT NULL,
                         month INTEGER NOT NULL,
                         day INTEGER NOT NULL,
@@ -107,53 +107,53 @@ def create_fact_purchase_order():
     create_fact_purchase_order_sql = '''CREATE TABLE fact_purchase_order (
                         purchase_record_id SERIAL PRIMARY KEY,
                         purchase_order_id INT NOT NULL,
-                        created_date DATE NOT NULL,
+                        created_date DATE NOT NULL REFERENCES dim_date (date_id),
                         created_time TIME NOT NULL,
-                        last_updated_date DATE NOT NULL,
+                        last_updated_date DATE NOT NULL REFERENCES dim_date (date_id),
                         last_updated_time TIME NOT NULL,
-                        staff_id INTEGER NOT NULL,
-                        counterparty_id INT NOT NULL,
+                        staff_id INTEGER NOT NULL REFERENCES dim_staff (staff_id),
+                        counterparty_id INT NOT NULL REFERENCES dim_counterparty (counterparty_id),
                         item_code VARCHAR(50) NOT NULL,
                         item_quanitity INT NOT NULL,
                         item_unit_price NUMERIC NOT NULL,
-                        currency_id INT NOT NULL,
-                        agreed_delivery_date DATE NOT NULL,
-                        agreed_payment_date DATE NOT NULL,
-                        agreed_delivery_location_id INTEGER NOT NULL);'''
+                        currency_id INT NOT NULL REFERENCES dim_currency (currency_id),
+                        agreed_delivery_date DATE NOT NULL REFERENCES dim_date (date_id),
+                        agreed_payment_date DATE NOT NULL REFERENCES dim_date (date_id),
+                        agreed_delivery_location_id INTEGER NOT NULL REFERENCES dim_location (location_id));'''
     return db.run(create_fact_purchase_order_sql)
 
 def create_fact_payment():
     create_fact_payment_sql = '''CREATE TABLE fact_payment (
                         payment_record_id SERIAL PRIMARY KEY,
                         payment_id INT NOT NULL,
-                        created_date DATE NOT NULL,
+                        created_date DATE NOT NULL REFERENCES dim_date (date_id),
                         created_time TIME NOT NULL,
-                        last_updated_date DATE NOT NULL,
+                        last_updated_date DATE NOT NULL REFERENCES dim_date (date_id),
                         last_updated_time TIME NOT NULL,
-                        transaction_id INTEGER NOT NULL,
-                        counterparty_id INTEGER NOT NULL,
+                        transaction_id INTEGER NOT NULL REFERENCES dim_transaction (transaction_id),
+                        counterparty_id INTEGER NOT NULL REFERENCES dim_counterparty (counterparty_id),
                         payment_amount NUMERIC NOT NULL,
-                        currency_id INTEGER NOT NULL,
-                        payment_type_id INTEGER NOT NULL,
+                        currency_id INTEGER NOT NULL REFERENCES dim_currency (currency_id),
+                        payment_type_id INTEGER NOT NULL REFERENCES dim_payment_type (payment_type_id),
                         paid BOOLEAN NOT NULL,
-                        payment_date DATE NOT NULL);'''
+                        payment_date DATE NOT NULL REFERENCES dim_date (date_id));'''
     return db.run(create_fact_payment_sql)
 
 def create_fact_sales_order():
     create_fact_sales_order_sql = '''CREATE TABLE fact_sales_order (
                         sales_record_id SERIAL PRIMARY KEY,
                         sales_order_id INT NOT NULL,
-                        created_date DATE NOT NULL,
+                        created_date DATE NOT NULL REFERENCES dim_date (date_id),
                         created_time TIME NOT NULL,
-                        last_updated_date DATE NOT NULL,
+                        last_updated_date DATE NOT NULL REFERENCES dim_date (date_id),
                         last_updated_time TIME NOT NULL,
-                        sales_staff_id INTEGER NOT NULL,
+                        sales_staff_id INTEGER NOT NULL REFERENCES dim_staff (staff_id),
                         counterparty_id INTEGER NOT NULL,
                         units_sold INTEGER NOT NULL,
                         unit_price NUMERIC(10, 2) NOT NULL,
-                        currency_id INTEGER NOT NULL,
-                        design_id INTEGER NOT NULL,
-                        agreed_payment_date DATE NOT NULL,
-                        agreed_delivery_date DATE NOT NULL,
-                        agreed_delivery_location_id INTEGER NOT NULL);'''
+                        currency_id INTEGER NOT NULL REFERENCES dim_currency (currency_id),
+                        design_id INTEGER NOT NULL REFERENCES dim_design (design_id),
+                        agreed_payment_date DATE NOT NULL REFERENCES dim_date (date_id),
+                        agreed_delivery_date DATE NOT NULL REFERENCES dim_date (date_id),
+                        agreed_delivery_location_id INTEGER NOT NULL REFERENCES dim_location (location_id));'''
     return db.run(create_fact_sales_order_sql)
