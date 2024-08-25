@@ -13,6 +13,9 @@ def sales_facts(file_dict=None):
     if isinstance(sales_order, pd.DataFrame):
         # sales_order["created_date"] = pd.to_datetime(pd.to_datetime(sales_order["created_at"], format="mixed").dt.date)
         # sales_order["created_time"] = pd.to_datetime(sales_order["created_at"], format="mixed").dt.time
+
+        #sales_order["sales_order_id"] = sales_order.index
+        #sales_order.index.name = "sales_record_id"
         sales_order["created_date"] = (pd.to_datetime(sales_order["created_at"], format="mixed")).dt.date
         sales_order["created_time"] = (pd.to_datetime(sales_order["created_at"], format="mixed")).dt.time
         sales_order.drop(["created_at"], axis=1, inplace=True)
@@ -31,6 +34,7 @@ def sales_facts(file_dict=None):
         }, inplace=True)
 
         desired_order = [ 
+            #"sales_order_id",
             "created_date", 
             "created_time", 
             "last_updated_date", 

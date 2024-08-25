@@ -1,6 +1,7 @@
-from test_warehouse_data.connection_m import db
+from test_warehouse_data.connection_m import local_db_connect
 
 def seed():
+    db = local_db_connect()
     '''Seeds database'''
     db.run("DROP TABLE IF EXISTS dim_currency CASCADE;")
     db.run("DROP TABLE IF EXISTS dim_design CASCADE;")
@@ -15,26 +16,27 @@ def seed():
     db.run("DROP TABLE IF EXISTS fact_sales_order CASCADE;")
 
 
-    create_dim_currency()
-    create_dim_design()
-    create_dim_date()
-    create_dim_staff()
-    create_dim_location()
-    create_dim_counterparty()
-    create_dim_payment_type()
-    create_dim_transaction()
-    create_fact_purchase_order()
-    create_fact_payment()
-    create_fact_sales_order()
+    create_dim_currency(db)
+    create_dim_design(db)
+    create_dim_date(db)
+    create_dim_staff(db)
+    create_dim_location(db)
+    create_dim_counterparty(db)
+    create_dim_payment_type(db)
+    create_dim_transaction(db)
+    create_fact_purchase_order(db)
+    create_fact_payment(db)
+    create_fact_sales_order(db)
+    db.close()
 
-def create_dim_currency():
+def create_dim_currency(db):
     create_dim_currency_sql = '''CREATE TABLE dim_currency (
                             currency_id INT PRIMARY KEY,
                             currency_code VARCHAR(50) NOT NULL,
                             currency_name VARCHAR(50) NOT NULL);'''
     return db.run(create_dim_currency_sql)
 
-def create_dim_design():
+def create_dim_design(db):
     create_dim_design_sql = '''CREATE TABLE dim_design (
                             design_id INT PRIMARY KEY,
                             design_name VARCHAR(50) NOT NULL,
@@ -42,7 +44,7 @@ def create_dim_design():
                             file_name VARCHAR(50) NOT NULL);'''
     return db.run(create_dim_design_sql)
 
-def create_dim_date():
+def create_dim_date(db):
     create_dim_date_sql = '''CREATE TABLE dim_date (
                         date_id DATE PRIMARY KEY,
                         year INTEGER NOT NULL,
@@ -54,7 +56,7 @@ def create_dim_date():
                         quarter INTEGER NOT NULL);'''
     return db.run(create_dim_date_sql)
 
-def create_dim_staff():
+def create_dim_staff(db):
     create_dim_staff_sql = '''CREATE TABLE dim_staff (
                         staff_id INT PRIMARY KEY,
                         first_name VARCHAR(50) NOT NULL,
@@ -64,7 +66,7 @@ def create_dim_staff():
                         email_address VARCHAR(50) NOT NULL);'''
     return db.run(create_dim_staff_sql)
 
-def create_dim_location():
+def create_dim_location(db):
     create_dim_location_sql = '''CREATE TABLE dim_location (
                         location_id INT PRIMARY KEY,
                         address_line_1 VARCHAR(50) NOT NULL,
@@ -76,7 +78,7 @@ def create_dim_location():
                         phone VARCHAR(50) NOT NULL);'''
     return db.run(create_dim_location_sql)
 
-def create_dim_counterparty():
+def create_dim_counterparty(db):
     create_dim_counterparty_sql = '''CREATE TABLE dim_counterparty (
                         counterparty_id INT PRIMARY KEY,
                         counterparty_legal_name VARCHAR(50) NOT NULL,
@@ -89,13 +91,13 @@ def create_dim_counterparty():
                         counterparty_legal_phone_number VARCHAR(50) NOT NULL);'''
     return db.run(create_dim_counterparty_sql)
 
-def create_dim_payment_type():
+def create_dim_payment_type(db):
     create_dim_payment_type_sql = '''CREATE TABLE dim_payment_type (
                         payment_type_id INT PRIMARY KEY,
                         payment_type_name VARCHAR(50) NOT NULL);'''
     return db.run(create_dim_payment_type_sql)
 
-def create_dim_transaction():
+def create_dim_transaction(db):
     create_dim_transaction_sql = '''CREATE TABLE dim_transaction (
                         transaction_id INT PRIMARY KEY,
                         transaction_type VARCHAR(50) NOT NULL,
@@ -103,7 +105,7 @@ def create_dim_transaction():
                         purchase_order_id INTEGER);'''
     return db.run(create_dim_transaction_sql)
 
-def create_fact_purchase_order():
+def create_fact_purchase_order(db):
     create_fact_purchase_order_sql = '''CREATE TABLE fact_purchase_order (
                         purchase_record_id SERIAL PRIMARY KEY,
                         purchase_order_id INT NOT NULL,
@@ -122,7 +124,7 @@ def create_fact_purchase_order():
                         agreed_delivery_location_id INTEGER NOT NULL REFERENCES dim_location (location_id));'''
     return db.run(create_fact_purchase_order_sql)
 
-def create_fact_payment():
+def create_fact_payment(db):
     create_fact_payment_sql = '''CREATE TABLE fact_payment (
                         payment_record_id SERIAL PRIMARY KEY,
                         payment_id INT NOT NULL,
@@ -139,7 +141,7 @@ def create_fact_payment():
                         payment_date DATE NOT NULL REFERENCES dim_date (date_id));'''
     return db.run(create_fact_payment_sql)
 
-def create_fact_sales_order():
+def create_fact_sales_order(db):
     create_fact_sales_order_sql = '''CREATE TABLE fact_sales_order (
                         sales_record_id SERIAL PRIMARY KEY,
                         sales_order_id INT NOT NULL,

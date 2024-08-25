@@ -30,4 +30,3 @@ def local_db_connect():
 
     return connection
 
-db = local_db_connect()

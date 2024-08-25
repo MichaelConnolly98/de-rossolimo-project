@@ -80,7 +80,7 @@ def counterparty_dim(file_dict=None):
         full_counterparty_df = full_counterparty_df[desired_columns_and_order]
         full_counterparty_df.rename(columns={
             "address_line_1" : "counterparty_legal_address_line_1",
-            "address_line_2" : "counterparty_legal_address_line_2",
+            "address_line_2" : "counterparty_legal_address_line2",
             "district" : "counterparty_legal_district",
             "city" : "counterparty_legal_city",
             "postal_code" : "counterparty_legal_postal_code",
