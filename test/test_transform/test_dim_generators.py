@@ -208,11 +208,13 @@ class TestDimTransaction:
     def test_transaction_dim_data_types_are_expected(self):
         result = transaction_dim(file_dict=file_dict)
         assert result["transaction_type"].dtype == "object"
-        assert result["sales_order_id"].dtype == "float64"
-        assert result["purchase_order_id"].dtype == "float64"
+        assert result["sales_order_id"].dtype == "Int64"
+        assert result["purchase_order_id"].dtype == "Int64"
 
     def test_transaction_dim_index_is_expected(self):
         result = transaction_dim(file_dict=file_dict)
         assert result.index.name == "transaction_id"
 
-    
+    def test_transaction_dim_retains_null_values(self):
+        result = transaction_dim(file_dict=file_dict)
+        assert result.isnull().values.any()
