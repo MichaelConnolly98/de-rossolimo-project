@@ -113,4 +113,12 @@ def design_dim(file_dict=None):
         return design_df
     else:
         return None
+    
+def transaction_dim(file_dict=None):
+    transaction_df = dataframe_creator_single("transaction", file_dict)
+    if isinstance(transaction_df, pd.DataFrame):
+        transaction_df = transaction_df.drop(['created_at', 'last_updated'], axis=1)
+        return transaction_df
+    else:
+        return None
 
