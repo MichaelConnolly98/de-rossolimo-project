@@ -116,7 +116,7 @@ def create_fact_purchase_order(db):
                         staff_id INTEGER NOT NULL REFERENCES dim_staff (staff_id),
                         counterparty_id INT NOT NULL REFERENCES dim_counterparty (counterparty_id),
                         item_code VARCHAR(50) NOT NULL,
-                        item_quanitity INT NOT NULL,
+                        item_quantity INT NOT NULL,
                         item_unit_price NUMERIC NOT NULL,
                         currency_id INT NOT NULL REFERENCES dim_currency (currency_id),
                         agreed_delivery_date DATE NOT NULL REFERENCES dim_date (date_id),
