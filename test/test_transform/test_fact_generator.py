@@ -14,6 +14,7 @@ class TestSalesFact:
     def test_sales_facts_returns_correct_columns(self):
         response_df = sales_facts(file_dict=file_dict)
         expected_columns = [
+            "sales_order_id",
             "created_date", 
             "created_time", 
             "last_updated_date", 
@@ -34,12 +35,12 @@ class TestSalesFact:
         assert response_df.index.name=='sales_order_id'
         assert len(response_columns) == len(expected_columns)
 
-    @pytest.mark.skip
+    
     def test_sales_facts_returns_rows_with_correct_data_types(self):
         response_df = sales_facts(file_dict=file_dict)
-        assert response_df.dtypes['created_date'] == '<M8[ns]'
+        assert response_df.dtypes['created_date'] == 'object'
         assert response_df.dtypes['created_time'] == object
-        assert response_df.dtypes['last_updated_date'] == '<M8[ns]'
+        assert response_df.dtypes['last_updated_date'] == 'object'
         assert response_df.dtypes['last_updated_time'] == object
         assert response_df.dtypes['sales_staff_id'] == 'int64'
         assert response_df.dtypes['counterparty_id'] == 'int64'
@@ -59,6 +60,7 @@ class TestPurchaseOrderFact:
     def test_purchase_order_facts_returns_correct_columns(self):
         response_df = purchase_order_facts(file_dict=file_dict)
         expected_columns = [
+            "purchase_order_id",
             "created_date", 
             "created_time", 
             "last_updated_date", 
@@ -104,6 +106,7 @@ class TestPaymentFact:
     def test_payment_facts_returns_correct_columns(self):
         response_df = payment_facts(file_dict=file_dict)
         expected_columns = [
+        "payment_id",
         "created_date", 
         "created_time", 
         "last_updated_date", 

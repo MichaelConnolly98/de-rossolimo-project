@@ -20,15 +20,16 @@ def test_lambda_transformer_returns_dataframes_as_values(test_file_dict):
     for d in result.values():
         assert isinstance(d, pd.DataFrame)
     for i in [
-            "currency_table", 
-            "payment_dim",
-            "staff_dim",
-            "counterparty_dim",
-            "location_dim",
-            "design_dim",
-            "sales_facts",
-            "payment_facts",
-            "purchase_order_facts"]:
+            "dim_currency", 
+            "dim_payment_type",
+            "dim_staff",
+            "dim_counterparty",
+            "dim_location",
+            "dim_design",
+            "dim_transaction",
+            "fact_sales_order",
+            "fact_payment",
+            "fact_purchase_order"]:
         assert i in result.keys()
 
 @patch("utils.transformer.file_data_single", return_value={"":[]})
@@ -47,6 +48,7 @@ def test_lambda_transformer_returns_None_if_keys_present_but_data_not(
                                     "payment" : [],
                                     "staff" : [],
                                     "counterparty" : [],
+                                    "transaction" : [],
                                     "address": [],
                                     "design" : [],
                                     "sales_order" : [],

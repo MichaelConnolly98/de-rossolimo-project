@@ -10,12 +10,13 @@ import os
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-if os.getenv("S3_DATA_BUCKET_NAME") != None:
+if os.getenv("S3_DATA_BUCKET_NAME") is not None:
     S3BUCKETDATA = os.environ["S3_DATA_BUCKET_NAME"]
 else:
     S3BUCKETDATA = "de-rossolimo-ingestion-20240812125359611100000001"
 
-#should i put the get_connection in the parameters instead? 
+
+# should i put the get_connection in the parameters instead?
 def get_table_names(connection=get_connection):
     """
     Returns list of table names in database
@@ -32,28 +33,34 @@ def get_table_names(connection=get_connection):
         result = conn.run("""SELECT TABLE_NAME
         FROM INFORMATION_SCHEMA.TABLES
         WHERE TABLE_SCHEMA = 'public'""")
-        result_no_prisma =  [x[0] for x in result if x[0] != '_prisma_migrations']
-        
+        result_no_prisma = [x[0] for x in result if x[0] !=
+                            '_prisma_migrations']
+
         return result_no_prisma
-        
+
     except DatabaseError as e:
         logging.error(
-            {"Result": "Failure", "Error": f"A database error has occured: {str(e)}"}
+            {"Result": "Failure",
+             "Error": f"A database error has occured: {str(e)}"}
         )
         raise DatabaseError("A database connection error has occured")
     except Exception as err:
         logging.error(
             {
                 "Result": "Failure",
-                "Error": f"A database connection exception has occured: {str(err)}",
+                "Error": f"A database connection exception has occured: " +
+                f"{str(err)}",
             }
         )
         raise Exception("An exception has occured")
     finally:
         conn.close()
 
-#change bucket name to dynamic
-def get_keys_from_s3(s3_table_name_prefix, bucket_name="de-rossolimo-ingestion-20240812125359611100000001"):
+
+# change bucket name to dynamic
+def get_keys_from_s3(s3_table_name_prefix,
+                     bucket_name="de-rossolimo-ingestion-" +
+                     "20240812125359611100000001"):
     """
     Gets all key paths for a file prefix in s3 bucket
 
@@ -66,27 +73,35 @@ def get_keys_from_s3(s3_table_name_prefix, bucket_name="de-rossolimo-ingestion-2
     """
     try:
         s3_client = boto3.client("s3")
-        response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=f"table={s3_table_name_prefix}/")
+        response = s3_client.list_objects_v2(Bucket=bucket_name,
+                                             Prefix=f"table=" +
+                                             f"{s3_table_name_prefix}/")
 
         key_list = [el["Key"] for el in response["Contents"]]
         return key_list
-    
+
     except ClientError as e:
         logging.error(
-            {"Result": "Failure", "Error": f"A Client Error error has occured: {str(e)}"}
+            {"Result": "Failure",
+             "Error": f"A Client Error error has occured: {str(e)}"}
         )
         raise e
     except KeyError as k:
         if "Contents" in str(k):
-            logging.error({"Result": "Failure", "Error": f"No contents in Prefix or Bucket, {str(k)}"})
+            logging.error({"Result": "Failure",
+                           "Error": f"No contents in Prefix or Bucket, " +
+                           f"{str(k)}"})
         raise k
 
     except Exception as exception:
-        logging.error({"Result": "Failure", "Error": f"An exception has occured: {str(exception)}"})
+        logging.error({"Result": "Failure",
+                       "Error": f"An exception has occured: {str(exception)}"})
         raise Exception("An error has occured")
 
-#change bucket name to dynamic
-def get_s3_file_content_from_keys(key_list: list, bucket_name="de-rossolimo-ingestion-20240812125359611100000001"):
+
+# change bucket name to dynamic
+def get_s3_file_content_from_keys(key_list: list, bucket_name="de-rossolimo-" +
+                                  "ingestion-20240812125359611100000001"):
     """
     Gets file contents from s3 key list
 
@@ -97,7 +112,7 @@ def get_s3_file_content_from_keys(key_list: list, bucket_name="de-rossolimo-inge
     List of Python dictionary of data contained in each key path
     If key_list is empty list, returns empty list
     """
-    
+
     try:
         s3_client = boto3.client("s3")
         data = []
@@ -111,48 +126,55 @@ def get_s3_file_content_from_keys(key_list: list, bucket_name="de-rossolimo-inge
 
     except ClientError as e:
         logging.error(
-            {"Result": "Failure", "Error": f"A Client Error error has occured: {str(e)}"}
+            {"Result": "Failure",
+             "Error": f"A Client Error error has occured: {str(e)}"}
         )
         raise e
     except Exception as exception:
-        logging.error({"Result": "Failure", "Error": f"An exception has occured: {str(exception)}"})
+        logging.error({"Result": "Failure",
+                       "Error": f"An exception has occured: {str(exception)}"})
         raise Exception("An error has occured")
     return data
+
 
 def file_data(path_file="./pandas_test_data.json"):
     """
     Gets file data for every table stored in s3 bucket
 
     Returns:
-    Python dict of form 
+    Python dict of form
     {table_name: [{dict for each row},{}], table_name2: [{},{},{}], etc...}
     """
     try:
         table_names = get_table_names()
 
-        #{'address': [], 'staff': [], etc...}
+        # {'address': [], 'staff': [], etc...}
         file_contents_dict = {table_name: [] for table_name in table_names}
 
         for table in table_names:
             key_list = get_keys_from_s3(table)
             file_contents = get_s3_file_content_from_keys(key_list)
 
-            #take first item of list, which has keys already in
+            # take first item of list, which has keys already in
             list_to_add_to = file_contents[0]
             if len(file_contents) == 1:
                 file_contents_dict[table] = list_to_add_to[table]
             else:
-                #appends other dictionaries in other elements to first list element
+                # appends other dictionaries in
+                # other elements to first list element
                 for el in file_contents[1:]:
                     for ele in el[table]:
-                    #list to add format_to final form: {address: [{},{},{}]}
+                        # list to add format_to final form:
+                        # {address: [{},{},{}]}
                         list_to_add_to[table].append(ele)
                         file_contents_dict[table] = list_to_add_to[table]
 
         return file_contents_dict
     except Exception as exception:
-        logging.error({"Result": "Failure", "Error": f"An exception has occured: {str(exception)}"})
+        logging.error({"Result": "Failure",
+                       "Error": f"An exception has occured: {str(exception)}"})
         raise Exception("An error has occured")
+
 
 def dataframe_creator(table_name, file_dict=None):
     """
@@ -168,35 +190,15 @@ def dataframe_creator(table_name, file_dict=None):
     """
 
     try:
-            df = pd.json_normalize(file_dict[table_name])
-            df.name = table_name
-            df.set_index(f"{table_name}_id", inplace=True, drop=True)
-            df.sort_index(inplace=True)
-            return df
-            
+        df = pd.json_normalize(file_dict[table_name])
+        df.name = table_name
+        df.set_index(f"{table_name}_id", inplace=True, drop=True)
+        df.sort_index(inplace=True)
+        return df
+
     except Exception as exception:
         logging.error({
             "Result": "Failure",
             f"Error": "An exception has occured: {str(exception)"}
-    )
+        )
         raise exception
-
-    
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
