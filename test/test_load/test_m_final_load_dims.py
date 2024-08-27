@@ -10,10 +10,19 @@ from unittest.mock import patch
 import sqlalchemy
 from utils.load_connection_dbapi import connection
 from utils.pandas_testing import file_data
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+user=os.getenv("PG_USER")
+password=os.getenv("PG_PASSWORD")
+database=os.getenv("PG_DATABASE")
+host=os.getenv("PG_HOST")
+port=int(os.getenv("PG_PORT"))
+
+engine = sqlalchemy.create_engine(f'postgresql+pg8000://{user}:{password}@{host}:{port}/{database}')
 
 
-
-engine = sqlalchemy.create_engine('postgresql+pg8000://mostyn:password@localhost:5432/test_totesys')
 
 
 with open("pandas_test_up_to_date.json", "r") as f:
