@@ -107,7 +107,7 @@ def purchase_order_facts(file_dict=None):
             "item_quantity",
             "item_unit_price",
             "currency_id",
-            "agreed_delivery_date"
+            "agreed_delivery_date",
             "agreed_payment_date",
             "agreed_delivery_location_id"
         ]

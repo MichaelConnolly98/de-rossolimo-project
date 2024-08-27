@@ -70,7 +70,7 @@ def get_connection(secret_name="totesys"):
             {
                 "Result": "Failure",
                 "Error": f"A database connection error has occured: " +
-                {str(interr)},
+                f"{str(interr)}",
             }
         )
         raise InterfaceError("A database connection error has occured")
@@ -79,7 +79,7 @@ def get_connection(secret_name="totesys"):
             {
                 "Result": "Failure",
                 "Error": f"A database connection exception has occured: " +
-                {str(err)},
+                f"{str(err)}",
             }
         )
         raise Exception("A database connection exception has occured")
