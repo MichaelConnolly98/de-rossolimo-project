@@ -18,14 +18,6 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
-    - name: Connect to PostgreSQL
-      env:
-        PG_USER: ${{ secrets.PG_USER }}
-        PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
-        PG_DATABASE: test_totesys
-        PG_HOST: localhost
-        PG_PORT: 5432
-      run: python test/test_load/run_seed_m.py
     - name: Run Requirements
       run: make requirements
     - name: Run dev-setup
@@ -35,6 +27,11 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+        PG_USER: ${{ secrets.PG_USER }}
+        PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+        PG_DATABASE: test_totesys
+        PG_HOST: localhost
+        PG_PORT: 5432
       run: make run-checks
 
   deploy-terraform: 
