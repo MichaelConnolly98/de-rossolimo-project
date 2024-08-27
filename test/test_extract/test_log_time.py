@@ -7,26 +7,13 @@ import logging
 from botocore.exceptions import ClientError
 from unittest.mock import patch
 from datetime import datetime as dt
-
-# #time_round_to_100000_ms = int(round(dt.timestamp(dt.now())*1000, -7))
-# time_round_to_100000_ms = round(dt.timestamp(dt.now()), -7)
-
-    
-# # Here, we are using strftime() function to convert    
-# time = dt.fromtimestamp(time_round_to_100000_ms)
-# print(time)
-# Here, we are printing the values    
  
-#PutLogEvents being rejected for being too old datewise
-#always needs to be within 2 weeks of current date
+#PutLogEvents timestamps will be rejected if more than 2 weeks old.
+#This is a workaround to use the current year, month, day only
 
 now_time = dt.now()
 date = dt(now_time.year, now_time.month, now_time.day, 0, 0, 0)
-print(date)
-
 date_unix = (int(date.timestamp()*1000))
-print(int(date.timestamp()*1000))
-
 date_str = str(date)
 
 
