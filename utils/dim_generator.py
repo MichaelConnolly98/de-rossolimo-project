@@ -4,17 +4,17 @@ from utils.most_recent_pandas import dataframe_creator_single
 import json
 import numpy as np
 
+
 def create_date_table(
         start='2000-01-01',
-          end='2050-12-31'
-    ):
+        end='2050-12-31'):
     """
     Creates a date dimension table that should not need to be modified
     after creation
 
     Should only be ran once to generate original table
     """
-   
+
     df = pd.DataFrame(
         {"Date": pd.date_range(start, end)}
         )
@@ -26,7 +26,7 @@ def create_date_table(
     df["month_name"] = df.Date.dt.month_name()
     df["quarter"] = df.Date.dt.quarter
     df.set_index("Date", inplace=True)
-    df.index.name="date_id"
+    df.index.name = "date_id"
     return df
 
 
@@ -34,10 +34,12 @@ def currency_dim(file_dict=None):
     currency_df = dataframe_creator_single("currency", file_dict)
     if isinstance(currency_df, pd.DataFrame):
         currency_df = currency_df.drop(['created_at', 'last_updated'], axis=1)
-        currency_df["currency_name"] = currency_df["currency_code"].apply(currency_code_to_name)
+        currency_df["currency_name"] = currency_df["currency_code"].apply(
+            currency_code_to_name)
         return currency_df
     else:
         return None
+
 
 def payment_type_dim(file_dict=None):
     payment_df = dataframe_creator_single("payment_type", file_dict)
@@ -46,6 +48,7 @@ def payment_type_dim(file_dict=None):
         return payment_df
     else:
         return None
+
 
 def staff_dim(file_dict=None):
     part_staff_df = dataframe_creator_single("staff", file_dict)
@@ -56,12 +59,14 @@ def staff_dim(file_dict=None):
             department_df, on="department_id", how="left", rsuffix="a"
             )
         desired_columns_and_order = [
-            "first_name", "last_name", "department_name", "location", "email_address"
+            "first_name", "last_name", "department_name",
+            "location", "email_address"
             ]
         full_staff_df = full_staff_df[desired_columns_and_order]
         return full_staff_df
     else:
         return None
+
 
 def counterparty_dim(file_dict=None):
     part_counterparty_df = dataframe_creator_single("counterparty", file_dict)
@@ -94,7 +99,7 @@ def counterparty_dim(file_dict=None):
             "city" : "counterparty_legal_city",
             "postal_code" : "counterparty_legal_postal_code",
             "country": "counterparty_legal_country",
-            "phone" : "counterparty_legal_phone_number"
+            "phone": "counterparty_legal_phone_number"
         }, inplace=True)
         return full_counterparty_df
     else:
@@ -132,14 +137,15 @@ def design_dim(file_dict=None):
         return design_df
     else:
         return None
-    
+
+
 def transaction_dim(file_dict=None):
     transaction_df = dataframe_creator_single("transaction", file_dict)
     if isinstance(transaction_df, pd.DataFrame):
         transaction_df["transaction_id_new"] = transaction_df.index
         transaction_df.index.name = "index"
         transaction_df = transaction_df.rename(columns={
-            "transaction_id_new" : "transaction_id"
+            "transaction_id_new": "transaction_id"
         })
 
         transaction_df = transaction_df.drop(['created_at', 'last_updated'], axis=1)
@@ -152,4 +158,3 @@ def transaction_dim(file_dict=None):
         return transaction_df
     else:
         return None
-

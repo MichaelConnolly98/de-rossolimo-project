@@ -1,4 +1,5 @@
-from pg8000.native import Connection, literal, identifier, DatabaseError, InterfaceError
+from pg8000.native import Connection, literal, identifier
+from pg8000.native import DatabaseError, InterfaceError
 import boto3
 from botocore.exceptions import ClientError
 import json
@@ -11,7 +12,9 @@ logger.setLevel(logging.INFO)
 os.environ["AWS_DEFAULT_REGION"] = "eu-west-2"
 
 
-def get_db_credentials(secret_name="totesys", sm_client=boto3.client("secretsmanager")):
+def get_db_credentials(
+        secret_name="totesys",
+        sm_client=boto3.client("secretsmanager")):
     """
     Connects to AWS secrets manager and retrieves secret
 
@@ -24,10 +27,12 @@ def get_db_credentials(secret_name="totesys", sm_client=boto3.client("secretsman
     """
 
     try:
-        get_secret_value_response = sm_client.get_secret_value(SecretId=secret_name)
+        get_secret_value_response = sm_client.get_secret_value(
+            SecretId=secret_name)
     except ClientError as e:
         logging.error(
-            {"Result": "Failure", "Error": f"A secrets manager error has occured: {str(e)}"}
+            {"Result": "Failure",
+             "Error": f"A secrets manager error has occured: {str(e)}"}
         )
         raise e
 
@@ -56,14 +61,16 @@ def get_connection(secret_name="totesys"):
         )
     except DatabaseError as e:
         logging.error(
-            {"Result": "Failure", "Error": f"A database error has occured: {str(e)}"}
+            {"Result": "Failure",
+             "Error": f"A database error has occured: {str(e)}"}
         )
         raise DatabaseError("A database connection error has occured")
     except InterfaceError as interr:
         logging.error(
             {
                 "Result": "Failure",
-                "Error": f"A database connection error has occured: {str(interr)}",
+                "Error": f"A database connection error has occured: " +
+                f"{str(interr)}",
             }
         )
         raise InterfaceError("A database connection error has occured")
@@ -71,7 +78,8 @@ def get_connection(secret_name="totesys"):
         logging.error(
             {
                 "Result": "Failure",
-                "Error": f"A database connection exception has occured: {str(err)}",
+                "Error": f"A database connection exception has occured: " +
+                f"{str(err)}",
             }
         )
         raise Exception("A database connection exception has occured")
@@ -110,15 +118,18 @@ def extract_func(datetime="2000-01-01 00:00"):
             data_dict[table] = query_table(table, datetime)
 
         all_data_dict = {"all_data": data_dict}
-        logger.info({"Result": "Success", "Message": "extract function ran successfully"})
+        logger.info({"Result": "Success",
+                     "Message": "extract function ran successfully"})
         return all_data_dict
 
     except DatabaseError as e:
-        logging.error({"Result": "Failure", "Error": f"A database error has occured: {str(e)}"})
+        logging.error({"Result": "Failure",
+                       "Error": f"A database error has occured: {str(e)}"})
         raise DatabaseError("A database error has occured")
 
     except Exception as exception:
-        logging.error({"Result": "Failure", "Error": f"An exception has occured: {str(exception)}"})
+        logging.error({"Result": "Failure",
+                       "Error": f"An exception has occured: {str(exception)}"})
         raise Exception("An error has occured")
 
 
@@ -147,9 +158,13 @@ def query_table(table_name, datetime):
                 results_list.append(result)
             return results_list
     except DatabaseError as e:
-        logging.error({"Result": "Failure", "Error": f"A database query error has occured: {str(e)}"})
+        logging.error({"Result": "Failure",
+                       "Error": f"A database query error has occured: {str(e)}"
+                       })
         raise DatabaseError("A database query error has occured")
 
     except Exception as exception:
-        logging.error({"Result": "Failure", "Error": f"An exception has occured: {str(exception)}"})
+        logging.error({"Result": "Failure",
+                       "Error": f"An exception has occured: {str(exception)}"
+                       })
         raise Exception("A query exception has occured")

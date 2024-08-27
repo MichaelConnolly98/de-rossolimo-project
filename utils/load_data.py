@@ -8,8 +8,10 @@ from botocore.exceptions import ClientError
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+
 class BodyNotUploadedError:
     pass
+
 
 def load(data):
     """
@@ -41,36 +43,42 @@ def load(data):
         if counter == len(data["all_data"]):
             logger.warning("All tables will be uploaded as empty files")
 
-
         for key, value in data["all_data"].items():
             s3.put_object(
                 Bucket=(BUCKETNAME),
                 Key=(
-                    f"table={key}/year={date.year}/month={date.month}/day={date.day}/{folder_name_2}.json"
+                    f"table={key}/year={date.year}/month=" +
+                    "{date.month}/day={date.day}/{folder_name_2}.json"
                 ),
                 Body=json.dumps({key: value}, default=str),
             )
             response = s3.get_object(
                 Bucket=(BUCKETNAME),
                 Key=(
-                    f"table={key}/year={date.year}/month={date.month}/day={date.day}/{folder_name_2}.json"
+                    f"table={key}/year={date.year}/month=" +
+                    "{date.month}/day={date.day}/{folder_name_2}.json"
                 ),
             )
             response_body = response["Body"].read().decode("utf-8")
             if response_body is None:
                 logger.error(
-                    {"Result": "Failure",\
-                    "Error": f" body not uploaded at {folder_name} {folder_name_2}"}
+                    {"Result": "Failure",
+                     "Error": f" body not uploaded at " +
+                     "{folder_name} {folder_name_2}"}
                 )
-    
+
                 raise BodyNotUploadedError(
                     f"error at {folder_name} {folder_name_2}")
 
-        logger.info({"Result": "Success", "Message": f"data uploaded at {folder_name} {folder_name_2}"})
-        return {"Result": "Success", "Message": "data uploaded"}
+        logger.info({"Result": "Success",
+                     "Message": f"data uploaded at " +
+                     "{folder_name} {folder_name_2}"})
+        return {"Result": "Success",
+                "Message": "data uploaded"}
 
     except TypeError as t:
-        logger.error({"Result": "Failure", "Error": f"TypeError occurred: {str(t)}"})
+        logger.error({"Result": "Failure",
+                      "Error": f"TypeError occurred: {str(t)}"})
         raise TypeError('A TypeError has occured')
 
     except ClientError as c:
@@ -80,6 +88,7 @@ def load(data):
         raise c
 
     except Exception as e:
-        logger.error({"Result": "Failure",\
-                    "Error": f"Exception occurred on upload to s3 bucket: {str(e)}"})
+        logger.error({"Result": "Failure",
+                     "Error":
+                      f"Exception occurred on upload to s3 bucket: {str(e)}"})
         raise e

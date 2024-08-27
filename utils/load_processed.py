@@ -9,15 +9,18 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-# takes dataframe, puts it into parquet, stores as buffer, then saves buffer to s3 bucket
-# buffer stops need to save locally problems might arise if data is longer than memory
+# takes dataframe, puts it into parquet, stores as buffer,
+# then saves buffer to s3 bucket
+# buffer stops need to save locally problems might arise if
+# data is longer than memory
 # - look out for this !!
 
-if os.getenv("S3_PROCESS_BUCKET_NAME") == None:
+if os.getenv("S3_PROCESS_BUCKET_NAME") is None:
     with open("s3_process_bucket_name.txt") as f:
         S3_BUCKET_NAME = f.readline()
 else:
     S3_BUCKET_NAME = os.environ["S3_PROCESS_BUCKET_NAME"]
+
 
 def load_processer(df_name, df, bucket_name=S3_BUCKET_NAME):
     try:
@@ -26,26 +29,30 @@ def load_processer(df_name, df, bucket_name=S3_BUCKET_NAME):
         folder_name_2 = datetime.now().strftime("%H:%M:%S")
         table_name = df_name
         if df is not None:
-            
-            
-            #aws client that connects to s3
+
+            # aws client that connects to s3
             s3 = boto3.client('s3')
-            #temperary place to store bytes of parquet
-            out_buffer = BytesIO()  
+            # temperary place to store bytes of parquet
+            out_buffer = BytesIO()
             # put parquet into temp store
             df.to_parquet(out_buffer)
-            #upload to s3 bucketname is placeholder for now
+            # upload to s3 bucketname is placeholder for now
             s3.put_object(
-                Bucket = bucket_name,
-                Key = f"table={table_name}/year={date.year}/month={date.month}/day={date.day}/{folder_name_2}.parquet",
-                Body = out_buffer.getvalue()
+                Bucket=bucket_name,
+                Key=f"table={table_name}/year={date.year}/month=" +
+                "{date.month}/day={date.day}/{folder_name_2}.parquet",
+                Body=out_buffer.getvalue()
             )
             # return value is logged?
-            logger.info({"Result": "Success", "Message": f"{table_name} data uploaded at {folder_name} {folder_name_2}"})
+            logger.info({"Result": "Success",
+                         "Message": f"{table_name} data uploaded at " +
+                         "{folder_name} {folder_name_2}"})
             return table_name
 
         else:
-            logger.info({"Message": f"no data to upload at {folder_name} {folder_name_2}"})
+            logger.info({"Message": f"no data to upload at " +
+                         "{folder_name} {folder_name_2}"})
     except AttributeError as ae:
-        logger.error({"Result": "Failure", "Error": f"AttributeError occurred: {str(ae)}"})
-        raise ae 
+        logger.error({"Result": "Failure",
+                      "Error": f"AttributeError occurred: {str(ae)}"})
+        raise ae
