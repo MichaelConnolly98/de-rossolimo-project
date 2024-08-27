@@ -18,6 +18,13 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
+    - name: Set-up Postgres
+      uses: action-setup-postgres@v6
+      with:
+        username: ${{ secrets.PG_USER }}
+        password: ${{ secrets.PG_PASSWORD }}
+        database: test_totesys
+        port: 5432
     - name: Run Requirements
       run: make requirements
     - name: Run dev-setup
@@ -32,6 +39,7 @@ jobs:
         PG_DATABASE: test_totesys
         PG_HOST: localhost
         PG_PORT: 5432
+      run: psql -f test/test_load/totesys.sql
       run: make run-checks
 
   deploy-terraform: 
