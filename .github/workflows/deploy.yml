@@ -24,8 +24,8 @@ jobs:
         PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
         PG_DATABASE: test_totesys
         PG_HOST: localhost
-        port: 5432
-      run: python test/test_load/test_database/run_seed.py
+        PG_PORT: 5432
+      run: python test/test_load/run_seed_m.py
     - name: Run Requirements
       run: make requirements
     - name: Run dev-setup
