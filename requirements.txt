@@ -61,6 +61,7 @@ scramp==1.4.5
 shellingham==1.5.4
 six==1.16.0
 stevedore==5.2.0
+sqlalchemy==2.0.32
 typer==0.12.3
 typing_extensions==4.12.2
 tzdata==2024.1
