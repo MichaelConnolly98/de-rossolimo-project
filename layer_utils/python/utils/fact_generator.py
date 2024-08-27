@@ -1,16 +1,29 @@
 from utils.most_recent_pandas import dataframe_creator_single
 import pandas as pd
 
+'''
+For the SQL INSERT, all the dates might neeed to be strings rather than date types
+TO DO: Finish converting all dates to strings if needed 
+
+'''
+
 def sales_facts(file_dict=None):
     
     sales_order = dataframe_creator_single("sales_order", file_dict)
     if isinstance(sales_order, pd.DataFrame):
-        sales_order["created_date"] = pd.to_datetime(pd.to_datetime(sales_order["created_at"], format="mixed").dt.date)
-        sales_order["created_time"] = pd.to_datetime(sales_order["created_at"], format="mixed").dt.time
+        # sales_order["created_date"] = pd.to_datetime(pd.to_datetime(sales_order["created_at"], format="mixed").dt.date)
+        # sales_order["created_time"] = pd.to_datetime(sales_order["created_at"], format="mixed").dt.time
+
+        sales_order["sales_order_id"] = sales_order.index
+        # sales_order.reset_index()
+        # sales_order.index.name = "sales_record_id"
+
+        sales_order["created_date"] = (pd.to_datetime(sales_order["created_at"], format="mixed")).dt.date
+        sales_order["created_time"] = (pd.to_datetime(sales_order["created_at"], format="mixed")).dt.time
         sales_order.drop(["created_at"], axis=1, inplace=True)
 
-        sales_order["last_updated_date"] = pd.to_datetime(pd.to_datetime(sales_order["last_updated"], format="mixed").dt.date)
-        sales_order["last_updated_time"] = pd.to_datetime(sales_order["last_updated"], format="mixed").dt.time
+        sales_order["last_updated_date"] = (pd.to_datetime(sales_order["last_updated"], format="mixed")).dt.date
+        sales_order["last_updated_time"] = (pd.to_datetime(sales_order["last_updated"], format="mixed")).dt.time
         sales_order.drop(["last_updated"], axis=1, inplace=True)
 
         sales_order["agreed_payment_date"] = pd.to_datetime(sales_order["agreed_payment_date"])
@@ -19,10 +32,12 @@ def sales_facts(file_dict=None):
         sales_order['unit_price'] = pd.to_numeric(sales_order['unit_price'])
 
         sales_order.rename(columns={
-            "staff_id" : "sales_staff_id"
+            "staff_id" : "sales_staff_id",
+            "sales_order_id_col" : "sales_order_id"
         }, inplace=True)
 
         desired_order = [ 
+            "sales_order_id",
             "created_date", 
             "created_time", 
             "last_updated_date", 
@@ -49,6 +64,7 @@ def purchase_order_facts(file_dict=None):
     
     purchase_order = dataframe_creator_single('purchase_order', file_dict)
     if isinstance(purchase_order, pd.DataFrame):
+        purchase_order["purchase_order_id"] = purchase_order.index
         purchase_order["created_date"] = pd.to_datetime(pd.to_datetime(purchase_order["created_at"], format="mixed").dt.date)
         purchase_order["created_time"] = pd.to_datetime(purchase_order["created_at"], format="mixed").dt.time
         purchase_order.drop(["created_at"], axis=1, inplace=True)
@@ -62,6 +78,7 @@ def purchase_order_facts(file_dict=None):
 
         purchase_order['item_unit_price'] = pd.to_numeric(purchase_order['item_unit_price'])
         desired_order = [
+            "purchase_order_id",
             "created_date", 
             "created_time", 
             "last_updated_date", 
@@ -87,6 +104,7 @@ def purchase_order_facts(file_dict=None):
 def payment_facts(file_dict=None):
     payment = dataframe_creator_single('payment', file_dict)
     if isinstance(payment, pd.DataFrame):
+        payment["payment_id"] = payment.index
         payment.drop(["company_ac_number", "counterparty_ac_number"], axis=1, inplace=True)
 
         payment["created_date"] = pd.to_datetime(pd.to_datetime(payment["created_at"], format="mixed").dt.date)
@@ -105,6 +123,7 @@ def payment_facts(file_dict=None):
 
 
         desired_order = [
+            "payment_id",
             "created_date", 
             "created_time", 
             "last_updated_date", 
