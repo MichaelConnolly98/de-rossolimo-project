@@ -39,7 +39,6 @@ jobs:
         PG_DATABASE: test_totesys
         PG_HOST: localhost
         PG_PORT: 5432
-      run: psql -f test/test_load/totesys.sql
       run: make run-checks
 
   deploy-terraform: 
