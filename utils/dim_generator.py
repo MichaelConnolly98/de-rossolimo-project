@@ -68,19 +68,28 @@ def counterparty_dim(file_dict=None):
     if isinstance(part_counterparty_df, pd.DataFrame):
         address_df = dataframe_creator_single("address", file_dict)
         address_df["legal_address_id"] = address_df.index
-        
 
+        
+        
         full_counterparty_df = part_counterparty_df.join(
             address_df, on="legal_address_id", how="left", rsuffix="a")
+        
+        full_counterparty_df["counterparty_id_new"] = full_counterparty_df.index
+        full_counterparty_df.index.name = "index"
+        full_counterparty_df = full_counterparty_df.rename(columns={
+            "counterparty_id_new" : "counterparty_id"
+        })
+
         desired_columns_and_order = [
-            "counterparty_legal_name", "address_line_1", "address_line_2", "district", "city", "postal_code", "country", "phone"
+            "counterparty_id", "counterparty_legal_name", "address_line_1", "address_line_2", "district", "city", "postal_code", "country", "phone"
         ]
+        
         
         
         full_counterparty_df = full_counterparty_df[desired_columns_and_order]
         full_counterparty_df.rename(columns={
             "address_line_1" : "counterparty_legal_address_line_1",
-            "address_line_2" : "counterparty_legal_address_line2",
+            "address_line_2" : "counterparty_legal_address_line_2",
             "district" : "counterparty_legal_district",
             "city" : "counterparty_legal_city",
             "postal_code" : "counterparty_legal_postal_code",
@@ -95,8 +104,11 @@ def counterparty_dim(file_dict=None):
 def location_dim(file_dict=None):
     location_df = dataframe_creator_single("address", file_dict)
     if isinstance(location_df, pd.DataFrame):
-        location_df["location_id"]=location_df.index
-        location_df.set_index("location_id", inplace=True)
+        location_df["location_id_new"] = location_df.index
+        location_df.index.name = "index"
+        location_df = location_df.rename(columns={
+            "location_id_new" : "location_id"
+        })
         location_df = location_df.drop(['created_at', 'last_updated'], axis=1)
         return location_df
     else:
@@ -106,8 +118,15 @@ def location_dim(file_dict=None):
 def design_dim(file_dict=None):
     design_df = dataframe_creator_single("design", file_dict)
     if isinstance(design_df, pd.DataFrame):
+
+        design_df["design_id_new"] = design_df.index
+        design_df.index.name = "index"
+        design_df = design_df.rename(columns={
+            "design_id_new" : "design_id"
+        })
+
         desired_columns_and_order = [
-            "design_name", "file_location", "file_name"
+            "design_id", "design_name", "file_location", "file_name"
             ]
         design_df = design_df[desired_columns_and_order]
         return design_df
@@ -122,7 +141,10 @@ def transaction_dim(file_dict=None):
         transaction_df = transaction_df.rename(columns={
             "transaction_id_new" : "transaction_id"
         })
+
         transaction_df = transaction_df.drop(['created_at', 'last_updated'], axis=1)
+        desired_cols_and_order = ["transaction_id", "transaction_type", "sales_order_id", "purchase_order_id"]
+        transaction_df = transaction_df[desired_cols_and_order]
         transaction_df["sales_order_id"] = transaction_df["sales_order_id"].astype('Int64')
         transaction_df["sales_order_id"] = transaction_df["sales_order_id"].astype(object).where(pd.notnull(transaction_df["sales_order_id"]), None)
         transaction_df["purchase_order_id"] = transaction_df["purchase_order_id"].astype('Int64')
