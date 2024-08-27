@@ -2,7 +2,7 @@ import pandas as pd
 from utils.currency_code_to_name import currency_code_to_name
 from utils.most_recent_pandas import dataframe_creator_single
 import json
-
+import numpy as np
 
 def create_date_table(
         start='2000-01-01',
@@ -80,7 +80,7 @@ def counterparty_dim(file_dict=None):
         full_counterparty_df = full_counterparty_df[desired_columns_and_order]
         full_counterparty_df.rename(columns={
             "address_line_1" : "counterparty_legal_address_line_1",
-            "address_line_2" : "counterparty_legal_address_line_2",
+            "address_line_2" : "counterparty_legal_address_line2",
             "district" : "counterparty_legal_district",
             "city" : "counterparty_legal_city",
             "postal_code" : "counterparty_legal_postal_code",
@@ -111,6 +111,23 @@ def design_dim(file_dict=None):
             ]
         design_df = design_df[desired_columns_and_order]
         return design_df
+    else:
+        return None
+    
+def transaction_dim(file_dict=None):
+    transaction_df = dataframe_creator_single("transaction", file_dict)
+    if isinstance(transaction_df, pd.DataFrame):
+        transaction_df["transaction_id_new"] = transaction_df.index
+        transaction_df.index.name = "index"
+        transaction_df = transaction_df.rename(columns={
+            "transaction_id_new" : "transaction_id"
+        })
+        transaction_df = transaction_df.drop(['created_at', 'last_updated'], axis=1)
+        transaction_df["sales_order_id"] = transaction_df["sales_order_id"].astype('Int64')
+        transaction_df["sales_order_id"] = transaction_df["sales_order_id"].astype(object).where(pd.notnull(transaction_df["sales_order_id"]), None)
+        transaction_df["purchase_order_id"] = transaction_df["purchase_order_id"].astype('Int64')
+        transaction_df["purchase_order_id"] = transaction_df["purchase_order_id"].astype(object).where(pd.notnull(transaction_df["purchase_order_id"]), None)
+        return transaction_df
     else:
         return None
 
