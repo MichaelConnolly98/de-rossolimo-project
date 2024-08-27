@@ -1,4 +1,4 @@
-from test_warehouse_data.connection_m import local_db_connect
+from utils.load_connection_m import local_db_connect
 
 def seed():
     db = local_db_connect()

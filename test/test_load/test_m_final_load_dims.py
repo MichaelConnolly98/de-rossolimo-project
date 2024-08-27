@@ -2,13 +2,13 @@ from utils.final_load_dims_m import load_dim_m, load_facts_m, load_transaction
 from utils.dim_generator import location_dim, design_dim, staff_dim,\
 currency_dim, payment_type_dim, counterparty_dim, create_date_table, transaction_dim
 from utils.fact_generator import sales_facts, payment_facts, purchase_order_facts
-from connection_m import local_db_connect
+from utils.load_connection_m import local_db_connect
 from run_seed_m import run_seed
 import json
 import pytest
 from unittest.mock import patch
 import sqlalchemy
-from connection_dbapi import connection
+from utils.load_connection_dbapi import connection
 from utils.pandas_testing import file_data
 
 
