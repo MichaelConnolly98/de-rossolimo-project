@@ -19,7 +19,7 @@ jobs:
       with:
         python-version: '3.12'
     - name: Set-up Postgres
-      uses: action-setup-postgres@v6
+      uses: michaelconnolly98/action-setup-postgres@v6
       with:
         username: ${{ secrets.PG_USER }}
         password: ${{ secrets.PG_PASSWORD }}
