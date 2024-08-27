@@ -72,7 +72,7 @@ def load(data):
 
         logger.info({"Result": "Success",
                      "Message": f"data uploaded at " +
-                     "{folder_name} {folder_name_2}"})
+                     f"{folder_name} {folder_name_2}"})
         return {"Result": "Success",
                 "Message": "data uploaded"}
 
