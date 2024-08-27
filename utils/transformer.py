@@ -1,6 +1,6 @@
 import logging
-from utils.dim_generator import currency_dim, payment_type_dim, staff_dim, \
-    location_dim, counterparty_dim, design_dim, create_date_table
+from utils.dim_generator import currency_dim, payment_type_dim, staff_dim,\
+location_dim, counterparty_dim, design_dim, create_date_table, transaction_dim
 from utils.most_recent_pandas import file_data_single
 from utils.fact_generator import sales_facts
 from utils.fact_generator import payment_facts, purchase_order_facts
@@ -10,18 +10,18 @@ from botocore.exceptions import ClientError
 def lambda_transformer():
     try:
         file_dict = file_data_single()
-        # date table only needs to be their for first upload
-        dataframe_dict = {
-            "currency_table": currency_dim(file_dict=file_dict),
-            "payment_dim": payment_type_dim(file_dict=file_dict),
-            "staff_dim": staff_dim(file_dict=file_dict),
-            "counterparty_dim": counterparty_dim(file_dict=file_dict),
-            "location_dim": location_dim(file_dict=file_dict),
-            "design_dim": design_dim(file_dict=file_dict),
-            "sales_facts": sales_facts(file_dict=file_dict),
-            "payment_facts": payment_facts(file_dict=file_dict),
-            "purchase_order_facts": purchase_order_facts(file_dict=file_dict)
-
+        #date table only needs to be their for first upload
+        dataframe_dict ={
+            "dim_currency" : currency_dim(file_dict=file_dict),
+            "dim_payment_type" : payment_type_dim(file_dict=file_dict),
+            "dim_staff" : staff_dim(file_dict=file_dict),
+            "dim_counterparty" : counterparty_dim(file_dict=file_dict),
+            "dim_location" :location_dim(file_dict=file_dict),
+            "dim_design" : design_dim(file_dict=file_dict),
+            "dim_transaction" : transaction_dim(file_dict=file_dict),
+            "fact_sales_order" : sales_facts(file_dict=file_dict),
+            "fact_payment" : payment_facts(file_dict=file_dict),
+            "fact_purchase_order" : purchase_order_facts(file_dict=file_dict)
         }
 
         dataframe_values = [x for x in dataframe_dict.values() if x is None]
