@@ -1,5 +1,5 @@
-from test_warehouse_data.seed_m import seed
-from test_warehouse_data.connection_m import local_db_connect
+from seed_m import seed
+from utils.load_connection_m import local_db_connect
 
 # Do not change this code
 def run_seed():
