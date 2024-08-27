@@ -22,12 +22,13 @@ def lambda_handler(event, context):
     try:
         data = extract_func(get_timestamp_from_logs())
         load(data)
-        logger.info({"Result": "Success", "Message": "Extract Lambda ran successfully"})
+        logger.info({"Result": "Success",
+                     "Message": "Extract Lambda ran successfully"})
     except Exception as e:
         logger.error(
             {
                 "Result": "Failure",
-                "Error": f"Unexpected Exception occured in lambda_handler: {str(e)}",
-            }
-        )
+                "Error": f"Unexpected Exception occured in " +
+                f"lambda_handler: {str(e)}"
+                })
         raise e
