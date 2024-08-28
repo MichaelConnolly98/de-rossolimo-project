@@ -56,7 +56,7 @@ def test_extract_from_parquet_retrieves_data_and_returns_dataframe(s3_client):
     assert result.equals(dataf)
 
 def test_input_columns_are_same_as_output_columns_in_dataframe():
-    result = extract_from_parquet("design_dim",S3_BUCKET_NAME)
+    result = extract_from_parquet("dim_design",S3_BUCKET_NAME)
     for col in ["design_name", "file_location", "file_name"]:
         assert col in result.columns
     

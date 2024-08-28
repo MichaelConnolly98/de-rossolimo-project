@@ -15,8 +15,6 @@ if os.getenv("S3_DATA_BUCKET_NAME") is not None:
 else:
     S3BUCKETDATA = "de-rossolimo-ingestion-20240812125359611100000001"
 
-
-# should i put the get_connection in the parameters instead?
 def get_table_names_single(connection=get_connection):
     """
     Returns list of table names in database
@@ -97,7 +95,7 @@ def get_most_recent_key_per_table_from_s3_single(
 
 
 # change bucket name to dynamic
-def get_s3_file_content_from_key_single(key: list, bucket_name=S3BUCKETDATA):
+def get_s3_file_content_from_key_single(key, bucket_name=S3BUCKETDATA):
     """
     Gets file contents from s3 key list
 
@@ -126,10 +124,7 @@ def get_s3_file_content_from_key_single(key: list, bucket_name=S3BUCKETDATA):
              "Error": f"A Client Error error has occured: {str(e)}"}
         )
         raise e
-    # except Exception as exception:
-    #     logging.error({"Result": "Failure",
-    # "Error": f"An exception has occured: {str(exception)}"})
-    #     raise Exception("An error has occured")
+
     return data
 
 
@@ -166,10 +161,7 @@ def file_data_single():
                         file_contents_dict[table] = list_to_add_to[table]
 
     return file_contents_dict
-    # except Exception as exception:
-    #     logging.error({"Result": "Failure",
-    # "Error": f"An exception has occured: {str(exception)}"})
-    #     raise Exception("An error has occured")
+
 
 
 def dataframe_creator_single(table_name, file_dict=None):
