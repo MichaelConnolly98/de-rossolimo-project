@@ -12,6 +12,8 @@ from utils.load_connection_dbapi import connection
 from utils.pandas_testing import file_data
 import os
 from dotenv import load_dotenv
+import pandas as pd
+from numpy import float64
 
 load_dotenv()
 user=os.getenv("PG_USER")
@@ -42,7 +44,7 @@ def conn():
     db.close()
 
 
-    
+# @pytest.mark.skip
 def test_load_dims_loads_location_dim_table(seeder, conn):
     load_dim_m("dim_location", test_df, engine)
     
@@ -53,7 +55,9 @@ def test_load_dims_loads_location_dim_table(seeder, conn):
     columns = [column["name"] for column in conn.columns]
     for col in columns:
         assert col in ['location_id', 'address_line_1', 'address_line_2', 'district', 'city', 'postal_code', 'country', 'phone']
-    
+
+
+# @pytest.mark.skip
 def test_load_dims_loads_all_dims_tables(seeder, conn):
     conn_dbapi = connection()
     currency_df = currency_dim(file_dict)
@@ -98,7 +102,21 @@ def test_load_dims_loads_all_dims_tables(seeder, conn):
         assert len(value) > 0
 
 
-
+def test_load_transation_loads_correctly(seeder):
+    conn_dbapi = connection()
+    transaction_df = transaction_dim(file_dict)
+    load_transaction(transaction_df, conn_dbapi)
+    sql_query = "SELECT * FROM dim_transaction;"
+    response = conn_dbapi.run(sql_query)
+    read_df = pd.read_sql(sql_query, engine)
+    expected_columns = ['transaction_id', 'transaction_type', 'sales_order_id', 'purchase_order_id']
+    columns = list(read_df.columns.values)
+    assert set(expected_columns) == set(columns)
+    assert len(expected_columns) == len(columns)
+    assert read_df['transaction_id'].iloc[0] == 1
+    assert read_df['transaction_type'].iloc[0] == 'PURCHASE'
+    assert type(read_df['sales_order_id'].iloc[0]) == float64
+    assert read_df['purchase_order_id'].iloc[0] == 2.0
 
 
 #do a full test using the extract bucket and test data at some point
