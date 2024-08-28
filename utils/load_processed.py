@@ -40,18 +40,18 @@ def load_processer(df_name, df, bucket_name=S3_BUCKET_NAME):
             s3.put_object(
                 Bucket=bucket_name,
                 Key=f"table={table_name}/year={date.year}/month=" +
-                "{date.month}/day={date.day}/{folder_name_2}.parquet",
+                f"{date.month}/day={date.day}/{folder_name_2}.parquet",
                 Body=out_buffer.getvalue()
             )
             # return value is logged?
             logger.info({"Result": "Success",
                          "Message": f"{table_name} data uploaded at " +
-                         "{folder_name} {folder_name_2}"})
+                         f"{folder_name} {folder_name_2}"})
             return table_name
 
         else:
             logger.info({"Message": f"no data to upload at " +
-                         "{folder_name} {folder_name_2}"})
+                         f"{folder_name} {folder_name_2}"})
     except AttributeError as ae:
         logger.error({"Result": "Failure",
                       "Error": f"AttributeError occurred: {str(ae)}"})
