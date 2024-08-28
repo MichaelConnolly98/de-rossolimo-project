@@ -1,4 +1,5 @@
-from utils.final_load_dims_m import load_dim_m, load_facts_m, load_transaction
+from utils.final_load_dims_m import load_dim_m, load_facts_m,\
+load_transaction, load_counterparty
 from utils.dim_generator import location_dim, design_dim, staff_dim,\
 currency_dim, payment_type_dim, counterparty_dim, create_date_table, transaction_dim
 from utils.fact_generator import sales_facts, payment_facts, purchase_order_facts
@@ -13,7 +14,7 @@ from utils.pandas_testing import file_data
 import os
 from dotenv import load_dotenv
 import pandas as pd
-from numpy import float64
+from numpy import float64, int64
 
 load_dotenv()
 user=os.getenv("PG_USER")
@@ -44,7 +45,7 @@ def conn():
     db.close()
 
 
-# @pytest.mark.skip
+@pytest.mark.skip
 def test_load_dims_loads_location_dim_table(seeder, conn):
     load_dim_m("dim_location", test_df, engine)
     
@@ -57,7 +58,7 @@ def test_load_dims_loads_location_dim_table(seeder, conn):
         assert col in ['location_id', 'address_line_1', 'address_line_2', 'district', 'city', 'postal_code', 'country', 'phone']
 
 
-# @pytest.mark.skip
+@pytest.mark.skip
 def test_load_dims_loads_all_dims_tables(seeder, conn):
     conn_dbapi = connection()
     currency_df = currency_dim(file_dict)
@@ -102,13 +103,14 @@ def test_load_dims_loads_all_dims_tables(seeder, conn):
         assert len(value) > 0
 
 
-def test_load_transation_loads_correctly(seeder):
+def test_load_transaction_loads_correctly(seeder):
     conn_dbapi = connection()
     transaction_df = transaction_dim(file_dict)
     load_transaction(transaction_df, conn_dbapi)
-    sql_query = "SELECT * FROM dim_transaction;"
+    sql_query = "SELECT * FROM dim_transaction LIMIT 10;"
     response = conn_dbapi.run(sql_query)
     read_df = pd.read_sql(sql_query, engine)
+    conn_dbapi.close()
     expected_columns = ['transaction_id', 'transaction_type', 'sales_order_id', 'purchase_order_id']
     columns = list(read_df.columns.values)
     assert set(expected_columns) == set(columns)
@@ -118,6 +120,36 @@ def test_load_transation_loads_correctly(seeder):
     assert type(read_df['sales_order_id'].iloc[0]) == float64
     assert read_df['purchase_order_id'].iloc[0] == 2.0
 
+def test_load_counterparty_loads_correctly(seeder):
+    conn_dbapi = connection()
+    counterparty_df = counterparty_dim(file_dict)
+    load_counterparty(counterparty_df, conn_dbapi)
+    sql_query = "SELECT * FROM dim_counterparty LIMIT 10;"
+    response = conn_dbapi.run(sql_query)
+    read_df = pd.read_sql(sql_query, engine)
+    conn_dbapi.close()
+    expected_columns = ['counterparty_id',
+                        'counterparty_legal_name',
+                        'counterparty_legal_address_line_1',
+                        'counterparty_legal_address_line_2',
+                        'counterparty_legal_district',
+                        'counterparty_legal_city',
+                        'counterparty_legal_postal_code',
+                        'counterparty_legal_country',
+                        'counterparty_legal_phone_number']
+    columns = list(read_df.columns.values)
+    assert set(expected_columns) == set(columns)
+    assert len(expected_columns) == len(columns)
+    pd.set_option('display.max_colwidth', None)
+    assert type(read_df['counterparty_id'].iloc[0]) == int64
+    assert type(read_df['counterparty_legal_name'].iloc[0]) == str
+    assert type(read_df['counterparty_legal_address_line_1'].iloc[0]) == str
+    assert type(read_df['counterparty_legal_address_line_2'].iloc[0]) == str
+    # assert type(read_df['counterparty_legal_district'].iloc[0]) == str
+    assert type(read_df['counterparty_legal_city'].iloc[0]) == str
+    assert type(read_df['counterparty_legal_postal_code'].iloc[0]) == str
+    assert type(read_df['counterparty_legal_country'].iloc[0]) == str
+    assert type(read_df['counterparty_legal_phone_number'].iloc[0]) == str
 
 #do a full test using the extract bucket and test data at some point
 
