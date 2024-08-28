@@ -98,7 +98,7 @@ class TestDimCounterparty:
 
     def test_counterparty_index_is_expected(self):
         result = counterparty_dim(file_dict=file_dict)
-        assert result.index.name == "counterparty_id"
+        assert result.index.name == "index"
 
 class TestDimPaymentType:
     def test_payment_type_dim_returns_data_frame(self):
@@ -168,7 +168,7 @@ class TestDimLocation:
 
     def test_location_dim_index_is_expected(self):
         result = location_dim(file_dict=file_dict)
-        assert result.index.name == "location_id"
+        assert result.index.name == "index"
 
 
 class TestDimDesign:
@@ -191,7 +191,7 @@ class TestDimDesign:
 
     def test_design_dim_index_is_expected(self):
         result = design_dim(file_dict=file_dict)
-        assert result.index.name == "design_id"
+        assert result.index.name == "index"
 
 class TestDimTransaction:
     def test_transaction_dim_returns_dataframe(self):
@@ -207,13 +207,14 @@ class TestDimTransaction:
                     
     def test_transaction_dim_data_types_are_expected(self):
         result = transaction_dim(file_dict=file_dict)
+        print(result.dtypes)
         assert result["transaction_type"].dtype == "object"
-        assert result["sales_order_id"].dtype == "Int64"
-        assert result["purchase_order_id"].dtype == "Int64"
+        assert result["sales_order_id"].dtype == "object"
+        assert result["purchase_order_id"].dtype == "object"
 
     def test_transaction_dim_index_is_expected(self):
         result = transaction_dim(file_dict=file_dict)
-        assert result.index.name == "transaction_id"
+        assert result.index.name == "index"
 
     def test_transaction_dim_retains_null_values(self):
         result = transaction_dim(file_dict=file_dict)

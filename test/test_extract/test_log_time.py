@@ -6,12 +6,15 @@ from utils.log_time import get_timestamp_from_logs, InvalidInput
 import logging
 from botocore.exceptions import ClientError
 from unittest.mock import patch
+from datetime import datetime as dt
+ 
+#PutLogEvents timestamps will be rejected if more than 2 weeks old.
+#This is a workaround to use the current year, month, day only
 
-
-# put fake logs in, see if it returns the most recent one
-# see if the time works with an sql query (all times are after the input time)
-# client error handling of course
-# other error handling
+now_time = dt.now()
+date = dt(now_time.year, now_time.month, now_time.day, 0, 0, 0)
+date_unix = (int(date.timestamp()*1000))
+date_str = str(date)
 
 
 @pytest.fixture(scope="function")
@@ -39,17 +42,19 @@ def mock_logs_with_stream_and_group(mock_logs_client):
     yield mock_logs_client
 
 
+
 def test_get_timestamp_returns_timestamp_from_logs(mock_logs_with_stream_and_group):
-    mock_logs_with_stream_and_group.put_log_events(
+    result1 = mock_logs_with_stream_and_group.put_log_events(
         logGroupName="string",
         logStreamName="string",
         logEvents=[
-            {"timestamp": 1723542891807, "message": "string"},
+            {"timestamp": date_unix, "message": "string"},
         ],
         sequenceToken="string",
     )
+    print(result1)
     result = get_timestamp_from_logs("string")
-    assert result == "2024-08-13 10:54:51"
+    assert result == date_str
 
 
 def test_get_timestamp_returns_first_log_stream_start_time(
@@ -67,12 +72,12 @@ def test_get_timestamp_returns_first_log_stream_start_time(
         logGroupName="string",
         logStreamName="string",
         logEvents=[
-            {"timestamp": 1723542899807, "message": "string"},
+            {"timestamp": date_unix, "message": "string"},
         ],
         sequenceToken="string",
     )
     result = get_timestamp_from_logs("string")
-    assert result == "2024-08-13 10:54:51"
+    assert result == date_str
 
 
 def test_get_timestamp_returns_from_latest_log_stream(mock_logs_with_stream_and_group):
@@ -92,12 +97,12 @@ def test_get_timestamp_returns_from_latest_log_stream(mock_logs_with_stream_and_
         logGroupName="string",
         logStreamName="second_stream",
         logEvents=[
-            {"timestamp": 1723549999999, "message": "string"},
+            {"timestamp": date_unix, "message": "string"},
         ],
         sequenceToken="string",
     )
     result = get_timestamp_from_logs("string")
-    assert result == "2024-08-13 12:53:19"
+    assert result == date_str
 
 
 def test_get_timestamp_raises_client_error_when_resource_not_exists(

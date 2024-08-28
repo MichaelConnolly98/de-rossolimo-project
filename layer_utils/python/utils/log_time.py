@@ -51,8 +51,8 @@ def get_timestamp_from_logs(log_group_name="/aws/lambda/extract-de_rossolimo"):
             "%Y-%m-%d %H:%M:%S"
         )
         print(result)
-        logger.info({"Result": "Success",\
-                      "Message": "get_timestamp function ran successfully"})
+        logger.info({"Result": "Success",
+                    "Message": "get_timestamp function ran successfully"})
 
     except ClientError as c:
         logger.error({"Result": "Failure", "Error": c.response})
