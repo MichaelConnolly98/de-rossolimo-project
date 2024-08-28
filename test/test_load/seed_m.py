@@ -83,7 +83,7 @@ def create_dim_counterparty(db):
                         counterparty_id INT PRIMARY KEY,
                         counterparty_legal_name VARCHAR(50) NOT NULL,
                         counterparty_legal_address_line_1 VARCHAR(50) NOT NULL,
-                        counterparty_legal_address_line2 VARCHAR(50),
+                        counterparty_legal_address_line_2 VARCHAR(50),
                         counterparty_legal_district VARCHAR(50),
                         counterparty_legal_city VARCHAR(50) NOT NULL,
                         counterparty_legal_postal_code VARCHAR(50) NOT NULL,
