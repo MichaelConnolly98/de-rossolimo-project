@@ -25,11 +25,18 @@ def load_transaction(df, conn):
     
     # Iterate through the DataFrame rows and insert each row into the table
     for index, row in transaction_df.iterrows():
+        
+        if row['sales_order_id']:
+            row['sales_order_id'] = int(row['sales_order_id'])
+
+        if row['purchase_order_id']:
+            row['purchase_order_id'] = int(row['purchase_order_id'])
+
         cursor.execute(insert_query, (
             int(row['transaction_id']),
             row['transaction_type'],
-            int(row['sales_order_id']),
-            int(row['purchase_order_id'])
+            row['sales_order_id'],
+            row['purchase_order_id']
         ))
 
     # Commit the transaction
