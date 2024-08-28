@@ -57,7 +57,6 @@ def test_load_dims_loads_location_dim_table(seeder, conn):
     for col in columns:
         assert col in ['location_id', 'address_line_1', 'address_line_2', 'district', 'city', 'postal_code', 'country', 'phone']
 
-
 @pytest.mark.skip
 def test_load_dims_loads_all_dims_tables(seeder, conn):
     conn_dbapi = connection()
@@ -97,7 +96,7 @@ def test_load_dims_loads_all_dims_tables(seeder, conn):
     data_dict["result_fact_sales"] = conn.run("SELECT * FROM fact_sales_order;")
     data_dict["result_fact_payment"] = conn.run("SELECT * FROM fact_payment;")
     data_dict["result_fact_purchase"] = conn.run("SELECT * FROM fact_purchase_order;")
-    
+
 
     for value in data_dict.values():
         assert len(value) > 0
@@ -112,15 +111,13 @@ def test_load_transaction_loads_correctly(seeder):
     conn_dbapi.close()
     expected_columns = ['transaction_id', 'transaction_type', 'sales_order_id', 'purchase_order_id']
     columns = list(read_df.columns.values)
-    assert True
-    # assert set(expected_columns) == set(columns)
-    # assert len(expected_columns) == len(columns)
-    # assert read_df['transaction_id'].iloc[0] == 1
-    # assert read_df['transaction_type'].iloc[0] == 'PURCHASE'
-    # assert type(read_df['sales_order_id'].iloc[0]) == float64
-    # assert read_df['purchase_order_id'].iloc[0] == 2.0
+    assert set(expected_columns) == set(columns)
+    assert len(expected_columns) == len(columns)
+    assert read_df['transaction_id'].iloc[0] == 1
+    assert read_df['transaction_type'].iloc[0] == 'PURCHASE'
+    assert type(read_df['sales_order_id'].iloc[0]) == float64
+    assert read_df['purchase_order_id'].iloc[0] == 2.0
 
-@pytest.mark.skip
 def test_load_counterparty_loads_correctly(seeder):
     conn_dbapi = connection()
     counterparty_df = counterparty_dim(file_dict)
