@@ -48,7 +48,7 @@ def load(data):
                 Bucket=(BUCKETNAME),
                 Key=(
                     f"table={key}/year={date.year}/month=" +
-                    "{date.month}/day={date.day}/{folder_name_2}.json"
+                    f"{date.month}/day={date.day}/{folder_name_2}.json"
                 ),
                 Body=json.dumps({key: value}, default=str),
             )
@@ -56,7 +56,7 @@ def load(data):
                 Bucket=(BUCKETNAME),
                 Key=(
                     f"table={key}/year={date.year}/month=" +
-                    "{date.month}/day={date.day}/{folder_name_2}.json"
+                    f"{date.month}/day={date.day}/{folder_name_2}.json"
                 ),
             )
             response_body = response["Body"].read().decode("utf-8")
@@ -64,7 +64,7 @@ def load(data):
                 logger.error(
                     {"Result": "Failure",
                      "Error": f" body not uploaded at " +
-                     "{folder_name} {folder_name_2}"}
+                     f"{folder_name} {folder_name_2}"}
                 )
 
                 raise BodyNotUploadedError(
@@ -72,7 +72,7 @@ def load(data):
 
         logger.info({"Result": "Success",
                      "Message": f"data uploaded at " +
-                     "{folder_name} {folder_name_2}"})
+                     f"{folder_name} {folder_name_2}"})
         return {"Result": "Success",
                 "Message": "data uploaded"}
 

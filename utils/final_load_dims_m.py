@@ -26,10 +26,10 @@ def load_transaction(df, conn):
     # Iterate through the DataFrame rows and insert each row into the table
     for index, row in transaction_df.iterrows():
         cursor.execute(insert_query, (
-            row['transaction_id'],
+            int(row['transaction_id']),
             row['transaction_type'],
-            row['sales_order_id'],
-            row['purchase_order_id']
+            int(row['sales_order_id']),
+            int(row['purchase_order_id'])
         ))
 
     # Commit the transaction
