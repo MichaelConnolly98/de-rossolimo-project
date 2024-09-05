@@ -14,7 +14,7 @@ Transform the JSON data into a star schema and store in parquet format
 ### Load
 Loads the data into the end OLAP data warehouse
 
-## Date Warehouse Schema
+## Data Warehouse Schema
 The final schema of the dataware is a star schema made up of 3 facts tables with 8 dimension tables
 ![alt text](image-warehouse_schema.png)
 
