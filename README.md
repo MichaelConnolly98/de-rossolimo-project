@@ -36,8 +36,8 @@ The final schema of the dataware is a star schema made up of 3 facts tables with
 - Code for Lambda functions
 
 ## Roadmap
-- [ ] Upload data into the final warehouse
-- [ ] Add business intelligence 
+- [X] Upload data into the final warehouse
+- [X] Add business intelligence 
 - [ ] Refactor
 - [ ] Optimise
 
